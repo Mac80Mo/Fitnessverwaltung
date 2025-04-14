@@ -7,6 +7,21 @@
 <body>
     <h1>Deine Gewichtseinträge</h1>
 
+    {% if bmi %}
+        <p><strong>Dein aktueller BMI:</strong> {{ bmi }}
+        {% if bmi < 18.5 %}
+            (Untergewicht)
+        {% elif bmi < 25 %}
+            (Normalgewicht)
+        {% elif bmi < 30 %}
+            (Übergewicht)
+        {% else %}
+            (Adipositas)
+        {% endif %}
+        </p>
+    {% endif %}
+
+
     <table border="1" cellpadding="5" cellspacing="0">
         <tr>
             <th>Datum</th>

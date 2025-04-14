@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Profil</title>
+</head>
+<body>
+    <h1>Mein Profil</h1>
+
+    <ul>
+        <li><strong>Name:</strong> {{ user.name }}</li>
+        <li><strong>E-Mail:</strong> {{ user.email }}</li>
+        <li><strong>Alter:</strong> {{ user.age }}</li>
+        <li><strong>Größe:</strong> {{ user.height_cm }}</li>
+        {% if bmi %}
+            <li><strong>Aktueller BMI:</strong> {{ bmi }}</li>
+        {% else %}
+            <li><em>Noch kein Gewicht eingetragen.</em></li>
+        {% endif %}
+    </ul>
+
+    <p>
+        <a href="{{ url_for('tracking.weight_list') }}">Zum Gewichstverlauf</a>
+    </p>
+
+    <hr>
+    <h2>Deine Gewichtsstatistik</h2>
+
+    {% if num_entries %}
+        <ul>
+            <li><strong>Anzahl der Einträge:</strong> {{ num_entries }}</li>
+            <li><strong>Durchschnitt-Gewicht:</strong> {{ avg_weight }} kg</li>
+            <li><strong>Max. Gewicht:</strong> {{ max_weight }} kg</li>
+            <li><strong>Min. Gewicht:</strong> {{ min_weight }} kg</li>
+            <li><strong>Zeitraum:</strong> {{ start_date }} - {{ end_date }}</li>
+        </ul>
+    {% else %}
+        <p><em>Es wurden noch keine Gewichtseinträge gemacht,</em></p>
+    {% endif %}
+
+    <hr>
+    <h2>Gewicht & BMI Verlauf</h2>
+
+    <canvas id="gewichtChart" width="600" height="300"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('gewichtChart').getContext('2d');
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ labels|tojson }},
+                datasets: [
+                    {
+                        label: 'Gewicht (kg)',
+                        data: {{ weights_data|tojson }},
+                        borderColor: 'blue',
+                        backgroundColor: 'lightblue',
+                        yAxisID: 'y_gewicht',
+                        tension: 0.3
+                    },
+                    {
+                        label: 'BMI',
+                        data: {{ bmis_data|tojson }},
+                        borderColor: 'green',
+                        backgroundColor: 'lightgreen',
+                        yAxisID: 'y_bmi',
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y_gewicht: {
+                        type: 'linear',
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Gewicht (kg)'
+                        }
+                    },
+                    y_bmi: {
+                        type: 'linear',
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'BMI'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
+
+
+
