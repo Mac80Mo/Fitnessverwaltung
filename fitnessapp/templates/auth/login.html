@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <form method="POST">
+        <label>E-Mail:</label><br>
+        <input type="email" name="email" required><br><br>
+
+        <label>Passwort</label><br>
+        <input type="password" name="password" required><br><br>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <p><a href="{{ url_for('auth.register') }}">Noch kein Konto? Jetzt registrieren</a></p>
+</body>
+</html>

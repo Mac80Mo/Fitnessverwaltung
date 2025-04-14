@@ -1,0 +1,29 @@
+# 🐍 Python Cache-Dateien
+__pycache__/
+*.py[cod]
+*.pyo
+
+# 📦 Virtuelle Umgebung (Windows)
+venv/
+
+# 📁 VS Code Einstellungen
+.vscode/
+
+# 💾 SQLite-Dateien (wenn du mal testweise SQLite nutzt)
+*.sqlite3
+*.db
+
+# 🔐 Private Schlüssel oder Konfigs (z. B. .env)
+.env
+*.env
+
+# 🧪 Pytest/Cache
+*.pytest_cache/
+*.coverage
+
+# 🔧 Log-Dateien / temporäre Dumps
+*.log
+*.bak
+*.swp
+.DS_Store
+Thumbs.db

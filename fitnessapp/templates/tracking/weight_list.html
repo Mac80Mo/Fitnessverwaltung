@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Gewichtsverlauf</title>
+</head>
+<body>
+    <h1>Deine Gewichtseinträge</h1>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>Datum</th>
+            <th>Gewicht</th>
+        </tr>
+        {% for entry in entries %}
+        <tr>
+            <td>{{ entry.date.strftime('%d.%m.%Y %H:%M') }}</td>
+            <td>{{ entry.weight_kg }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <br>
+    <a href="{{ url_for('tracking.add_weight') }}">Neuen Eintrag hinzufügen</a>
+</body>
+</html>
