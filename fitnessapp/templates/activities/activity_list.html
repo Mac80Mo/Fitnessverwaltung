@@ -1,0 +1,22 @@
+<h1>Deine Aktivitäten</h1>
+<table border="1">
+    <tr>
+        <th>Datum</th>
+        <th>Aktivität</th>
+        <th>Dauer (Min)</th>
+        <th>Kalorien</th>
+    </tr>
+    {% for a in activities %}
+    <tr>
+        <td>{{ a.date.strftime('%d.%m.%Y %H:%M') }}</td>
+        <td>{{ a.activity_type }}</td>
+        <td>{{ a.duration_min }}</td>
+        <td>{{ a.calories or "-" }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br>
+<a href="{{ url_for('activities.add_activity') }}">Neue Aktivität eintragen</a>
+<br>
+<a href="{{ url_for('activities.activity_chart') }}">Diagramm anzeigen</a></p>

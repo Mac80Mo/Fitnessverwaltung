@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Aktivitätsdiagramm</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Deine Aktivitäten (Dauer pro Tag)</h1>
+
+    <canvas id="activityChart" width="600" height="300"></canvas>
+
+    <script>
+        const ctx = document.getElementById('activityChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ labels|tojson }},
+                datasets: [{
+                    label: 'Dauer in Minuten',
+                    data: {{ durations|tojson }},
+                    backgroundColor: 'orange',
+                    borderColor: 'darkorange',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Dauer (Min)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Datum'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+    <br>
+    <a href="{{ url_for('activities.activity_list') }}">Zurück zur Liste</a>
+
+</body>
+</html>

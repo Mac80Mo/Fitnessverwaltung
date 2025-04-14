@@ -30,6 +30,10 @@ def create_app():
     from fitnessapp.routes.tracking import tracking_bp
     app.register_blueprint(tracking_bp)
     
+    # Activities-Blueprint importieren
+    from fitnessapp.routes.activities import activities_bp
+    app.register_blueprint(activities_bp)
+    
     # Modelle importieren, damit diese bei create_all() erkannt werden
     import fitnessapp.models
     
