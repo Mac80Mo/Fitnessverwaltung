@@ -98,4 +98,25 @@ def calories_chart():
     calories = list(grouped.values())
     
     return render_template('activities/calories_chart.html', labels=labels, calories=calories)
+
+
+@activities_bp.route('/activities/calories-per-day')
+def calories_per_day_chart():
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    
+    from collections import defaultdict
+    activities = Activity.query.filter_by(user_id=session['user_id']).all()
+    
+    grouped = defaultdict(float)
+    for a in activities:
+        if a.calories:
+            tag = a.date.strftime('%d.%m.%Y')
+            grouped[tag] += a.calories
+    
+    labels = list(grouped.keys())
+    calories = list(grouped.values())
+    
+    return render_template('activities/calories_per_day.html', labels=labels, calories=calories)
+
     

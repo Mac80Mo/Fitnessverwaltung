@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Kalorien pro Tag</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Kalorienverbrauch pro Tag</h1>
+
+    <canvas id="calorieDayChart" width="600" height="300"></canvas>
+
+    <script>
+        const ctx = document.getElementById('calorieDayChart').getContext('2d');
+
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ labels|tojson }},
+                datasets: [{
+                    label: 'Kalorien (kcal)',
+                    data: {{ calories|tojson }},
+                    backgroundColor: 'steelblue',
+                    borderColor: 'navy';
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'kcal'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Datum'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+    <br>
+    <a href="{{ url_for('activities.activity_list') }}">Zurück zur Liste</a>
+</body>
+</html>
