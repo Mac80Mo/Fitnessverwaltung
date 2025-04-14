@@ -101,6 +101,7 @@ def profile():
         user=user,
         bmi=bmi,
         num_entries=num_entries,
+        current_weight=last_weight,
         avg_weight=avg_weight,
         min_weight=min_weight,
         max_weight=max_weight,
@@ -110,3 +111,23 @@ def profile():
         weights_data=weights_data,
         bmis_data=bmis_data
     )
+    
+@auth_bp.route('/profile/edit', methods=['GET', 'POST'])
+def edit_profile():
+    if 'user_id' not in session:
+        flash('Bitte zuerst einloggen.', 'warning')
+        return redirect(url_for('auth.login'))
+    
+    user = User.query.get(session['user_id'])
+    
+    if request.method == 'POST':
+        user.name = request.form['name']
+        user.email = request.form['email']
+        user.age = int(request.form['age'])
+        user.height_cm = float(request.form['height_cm'])
+        
+        db.session.commit()
+        flash('Profil erfolgreich aktualisiert.', 'success')
+        return redirect(url_for('auth.profile'))
+    
+    return render_template('auth/edit_profile.html', user=user)
