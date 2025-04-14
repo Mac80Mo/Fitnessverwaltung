@@ -60,3 +60,42 @@ def activity_chart():
     durations = list(grouped.values())
     
     return render_template('activities/activity_chart.html', labels=labels, durations=durations)
+
+
+@activities_bp.route('/activities/types')
+def activity_types_chart():
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    
+    activities = Activity.query.filter_by(user_id=session['user_id']).all()
+    
+    from collections import defaultdict
+    grouped = defaultdict(float)
+    
+    for a in activities:
+        grouped[a.activity_type] += a.duration_min or 0
+    
+    labels = list(grouped.keys())
+    durations = list(grouped.values())
+    
+    return render_template('activities/activity_types_chart.html', labels=labels, durations=durations)
+
+@activities_bp.route('/activities/calories')
+def calories_chart():
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    
+    activities = Activity.query.filter_by(user_id=session['user_id']).all()
+    
+    from collections import defaultdict
+    grouped = defaultdict(float)
+    
+    for a in activities:
+        if a.calories:
+            grouped[a.activity_type] += a.calories
+    
+    labels = list(grouped.keys())
+    calories = list(grouped.values())
+    
+    return render_template('activities/calories_chart.html', labels=labels, calories=calories)
+    

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Aktivitäten nach Typ</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Deine Zeitverteilung nach Aktivität</h1>
+
+    <canvas id="typesChart" width="500" height="300"></canvas>
+
+    <script>
+        const ctx = document.getElementById('typesChart').getContext('2d');
+
+        const chart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: {{ labels|tojson }},
+                datasets: [{
+                    label: 'Dauer pro Aktivitätstyp (Minuten)',
+                    data: {{ durations|tojson }},
+                    backgroundColor: [
+                        'tomato', 'orange', 'limegreen', 'skyblue', 'plum', 'khaki'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    </script>
+
+    <br>
+    <a href="{{ url_for('activities.activity_list') }}">Zurück zur Liste</a>
+</body>
+</html>

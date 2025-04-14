@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Kalorienverbrauch</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Kalorienverbrauch nach Aktivität</h1>
+
+    <canvas id="calorienChart" width="600" height="300"></canvas>
+
+    <script>
+        const ctx = document.getElementById('calorienChart').getContext('2d');
+
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ labels|tojson }},
+                datasets: [{
+                    label: 'Verbrauchte Kalorien',
+                    data: {{ calories|tojson }},
+                    backgroundColor: 'crimson',
+                    borderColor: 'darkred',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Kalorien (kcal)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Aktivität'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+    <br>
+    <a href="{{ url_for('activities.activity_list') }}">Zurück zur Liste</a>
+
+</body>
+</html>
