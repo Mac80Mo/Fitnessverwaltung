@@ -22,16 +22,33 @@
     <li><strong>Distanz:</strong> {{ distance_today }} km</li>
 </ul>
 
-
 <hr>
-<h2>Gewicht & BMI Verlauf</h2>
+<h2>Aktivität: Zeit nach Sportart</h2>
 <div class="chart-wrapper">
-    <iframe src="{{ url_for('tracking.weight_chart') }}" loading="lazy"></iframe>
+    <iframe src="{{ url_for('activities.activity_types_chart') }}" loading="lazy"></iframe>
 </div>
 
 <hr>
 <h2>Aktivität: Dauer pro Tag</h2>
 <div class="chart-wrapper">
     <iframe src="{{ url_for('activities.activity_chart') }}" loading="lazy"></iframe>
+</div>
+
+<hr>
+<h2>Distanz: Kilometer pro Tag</h2>
+<div class="chart-wrapper">
+    <iframe src="{{ url_for('activities.distance_per_day_chart') }}" loading="lazy"></iframe>
+</div>
+
+<hr>
+<h2>Kalorienverbrauch</h2>
+<div class="chart-wrapper">
+    <iframe src="{{ url_for('activities.calories_chart') }}" loading="lazy"></iframe>
+</div>
+
+<hr>
+<h2>Gewicht & BMI Verlauf</h2>
+<div class="chart-wrapper">
+    <iframe src="{{ url_for('tracking.weight_chart') }}" loading="lazy"></iframe>
 </div>
 {% endblock %}
