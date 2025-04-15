@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Aktivität bearbeiten{% endblock %}
+
+{% block content %}
+<div class="form-box">
+    <h1>Aktivität bearbeiten</h1>
+
+    <form method="POST">
+        <label>Aktivitätstyp:</label>
+        <input type="text" name="activity_type" value="{{ activity.activity_type }}" required>
+
+        <label>Dauer (Minuten):</label>
+        <input type="number" name="duration_min" step="1" value="{{ activity.duration_min }}" required>
+
+        <label>Kalorien:</label>
+        <input type="number" name="calories" step="1" value="{{ activity.calories or '' }}">
+
+        <label>Distanz (km):</label>
+        <input type="number" name="kilometers" step="0.1" value="{{ activity.kilometers or '' }}">
+
+        <button type="submit" class="btn btn-danger">Änderungen speichern</button>
+    </form>
+
+    <br>
+    <a href="{{ url_for('activities.activity_list') }}" class="btn btn-primary">Zurück zur Übersicht</a>
+</div>
+{% endblock %}

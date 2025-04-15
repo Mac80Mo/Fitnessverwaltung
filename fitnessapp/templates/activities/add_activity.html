@@ -1,13 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="form-box">
 <h1>Aktivität eintragen</h1>
 <form method="POST">
     <label>Art der Aktivität:</label><br>
-    <input type="text" name="activity_type" required><br><br>
+    <select type="text" name="activity_type" required>
+        <option value="Laufen">Laufen</option>
+        <option value="Radfahren">Radfahren</option>
+        <option value="Schwimmen">Schwimmen</option>
+        <option value="Fitnessstudio">Fitnessstudio</option>
+        <option value="Sonstiges">Sonstiges</option>
+    </select><br><br>
 
     <label>Dauer (Minuten):</label><br>
     <input type="number" name="duration" step="1" requirde><br><br>
 
+    <label>Distanz in km (optional):</label><br>
+    <input type="number" name="distance_km" step="0.1"><br><br>
+
     <label>Kalorien (optional):</label><br>
     <input type="number" name="calories" step="1"><br><br>
 
-    <button type="submit">Speichern</button>
+    <button type="submit" class="btn btn-danger">Speichern</button>
 </form>
+</div>
+{% endblock %}

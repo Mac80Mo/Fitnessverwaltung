@@ -35,5 +35,6 @@ class Activity(db.Model):
     activity_type = db.Column(db.String(100), nullable=False)                       # z.B. Laufen, Radfahren, etc...
     duration_min = db.Column(db.Float)                                              # Dauer in Minuten
     calories = db.Column(db.Float)                                                  # Kalorienverbr. (Optional)
+    distance_km = db.Column(db.Float)                                               # Kilometer bzw. Distanz
     date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))       # Datum d. Aktivität
 

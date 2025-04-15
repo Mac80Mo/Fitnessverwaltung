@@ -1,13 +1,36 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
-</head>
-<body>
-    <h1>Willkommen im Dashboard!</h1>
-    <p>Du bist eingeloggt als Benutzer #{{ user_id }}</p>
+{% extends 'base.html' %}
 
-    <a href="{{ url_for('auth.logout') }}">Logout</a>
-</body>
-</html>
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1>Willkommen zurück, {{ user.name }}!</h1>
+    
+<hr>
+<h2>Übersicht</h2>
+<ul>
+    <li><strong>Alter:</strong> {{ user.age }} Jahre</li>
+    <li><strong>Größe:</strong> {{ user.height_cm}} cm</li>
+    <li><strong>Letztes Gewicht:</strong> {{ last_weight or "-" }} kg</li>
+    <li><strong>BMI:</strong> {{ bmi or "-" }}</li>
+</ul>
+
+<hr>
+<h2>Gewicht & BMI Verlauf</h2>
+<div class="chart-wrapper">
+    <iframe src="{{ url_for('tracking.weight_chart') }}" loading="lazy"></iframe>
+</div>
+
+<hr>
+<h2>Aktivitäten heute</h2>
+<ul>
+    <li><strong>Zeit:</strong> {{ duration_today }} Minuten</li>
+    <li><strong>Kalorien:</strong> {{ calories_today }} kcal</li>
+    <li><strong>Distanz:</strong> {{ distance_today }} km</li>
+</ul>
+
+<hr>
+<h2>Aktivität: Dauer pro Tag</h2>
+<div class="chart-wrapper">
+    <iframe src="{{ url_for('activities.activity_chart') }}" loading="lazy"></iframe>
+</div>
+{% endblock %}

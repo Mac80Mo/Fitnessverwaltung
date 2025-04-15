@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Fitnessverwaltung{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <header>
+        <h1>Fitnessverwaltung</h1>
+        <nav>
+            <a href="{{ url_for('auth.dashboard') }}">Dashboard</a> |
+            <a href="{{ url_for('auth.profile') }}">Profil</a> |
+            <a href="{{ url_for('activities.activity_list') }}">Aktivitäten</a> |
+            <a href="{{ url_for('tracking.weight_list')}}">Gewicht</a> |
+            <a href="{{ url_for('auth.logout')}}">Logout</a>
+        </nav>
+        <hr>
+    </header>
+
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-container">
+          {% for category, message in messages %}
+           {% if message %}
+            <div class="flash {{ category }}">{{ message }}</div>
+           {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <footer>
+        <p>&copy; 2025 M.Moser</p>
+    </footer>
+
+</body>
+</html>

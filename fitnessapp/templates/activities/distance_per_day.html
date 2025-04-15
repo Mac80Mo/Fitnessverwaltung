@@ -2,26 +2,27 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Aktivitätsdiagramm</title>
+    <title>Distanz pro Tag</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Deine Aktivitäten (Dauer pro Tag)</h1>
+    <h1>Deine Kilometer pro Tag</h1>
 
-    <canvas id="activityChart" width="600" height="300"></canvas>
+    <canvas id="distanceChart" width="600" height="300"></canvas>
 
     <script>
-        const ctx = document.getElementById('activityChart').getContext('2d');
+        const ctx = document.getElementById('distanceChart').getContext('2d');
+
         const chart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: {{ labels|tojson }},
                 datasets: [{
-                    label: 'Dauer in Minuten',
-                    data: {{ durations|tojson }},
-                    backgroundColor: 'orange',
-                    borderColor: 'darkorange',
+                    label: 'Kilometer',
+                    data: {{ distances|tojson }},
+                    backgroundColor: 'mediumseagreen',
+                    borderColor: 'darkgreen',
                     borderWidth: 1
                 }]
             },
@@ -31,7 +32,7 @@
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Dauer (Min)'
+                            text: 'Kilometer'
                         }
                     },
                     x: {

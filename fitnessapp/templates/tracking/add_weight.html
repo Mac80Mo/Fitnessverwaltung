@@ -1,19 +1,16 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>Neues Gewicht eintragen</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="form-box">
     <h1>Neues Gewicht eintragen</h1>
 
     <form method="POST">
         <label>Bewicht (in kg):</label><br>
         <input type="number" name="weight" step="0.1" required><br><br>
-        <button type="submit">Speichern</button>
+        <button type="submit" class="btn btn-danger">Speichern</button>
     </form>
 
-    <br>
-    <a href="{{ url_for('tracking.weight_list') }}">Zur Gewichtsliste</a>
-</body>
-</html>
+</div>
+{% endblock %}

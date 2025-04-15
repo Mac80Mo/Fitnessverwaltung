@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from fitnessapp import db
-from fitnessapp.models.models import User
+from fitnessapp.models.models import User, WeightEntry, Activity
+from datetime import date
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -53,7 +54,39 @@ def dashboard():
         flash('Bitte zuerst einloggen.', 'warning')
         return redirect(url_for('auth.login'))
     
-    return render_template('auth/dashboard.html', user_id=session['user_id'])
+    flash('Flash funktioniert!', 'success')
+    
+    user = User.query.get(session['user_id'])
+    
+    # Letztes Gewicht
+    weights = sorted(user.weights, key=lambda e: e.date)
+    last_weight = weights[-1].weight_kg if weights else None
+    
+    # BMI
+    bmi = None
+    if last_weight:
+        height_m = user.height_cm / 100
+        bmi = round(last_weight / (height_m ** 2), 2)
+    
+    # Aktivitäten heute
+    today = date.today()
+    today_activities = [
+        a for a in user.activities if a.date.date() == today
+    ]
+    
+    duration_today = sum(a.duration_min or 0 for a in today_activities)
+    calories_today = sum(a.calories or 0 for a in today_activities)
+    distance_today = sum(a.distance_km or 0 for a in today_activities)
+    
+    return render_template(
+        'auth/dashboard.html', 
+        user=user,
+        bmi=bmi,
+        last_weight=last_weight,
+        duration_today=duration_today,
+        calories_today=calories_today,
+        distance_today=distance_today
+    )
 
 # Logout
 @auth_bp.route('/logout')
@@ -131,3 +164,17 @@ def edit_profile():
         return redirect(url_for('auth.profile'))
     
     return render_template('auth/edit_profile.html', user=user)
+
+@auth_bp.route('/testflash')
+def testflash():
+    if 'user_id' not in session:
+        flash('Bitte zuerst einloggen.', 'warning')
+        return redirect(url_for('auth.login'))
+
+    from fitnessapp.models.models import User
+    user = User.query.get(session['user_id'])
+
+    flash('Test erfolgreich 🎉', 'success')
+    return render_template('auth/dashboard.html', user=user)
+
+
