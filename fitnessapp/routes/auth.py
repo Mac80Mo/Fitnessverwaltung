@@ -165,16 +165,6 @@ def edit_profile():
     
     return render_template('auth/edit_profile.html', user=user)
 
-@auth_bp.route('/testflash')
-def testflash():
-    if 'user_id' not in session:
-        flash('Bitte zuerst einloggen.', 'warning')
-        return redirect(url_for('auth.login'))
 
-    from fitnessapp.models.models import User
-    user = User.query.get(session['user_id'])
-
-    flash('Test erfolgreich 🎉', 'success')
-    return render_template('auth/dashboard.html', user=user)
 
 

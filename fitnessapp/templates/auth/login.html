@@ -1,22 +1,22 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
 <body>
+    <div class="form-box">
     <h1>Login</h1>
-    <form method="POST">
+    <form method="POST" autocomplete="off">
         <label>E-Mail:</label><br>
-        <input type="email" name="email" required><br><br>
+        <input type="email" name="email" required autocomplete="off"><br><br>
 
         <label>Passwort</label><br>
-        <input type="password" name="password" required><br><br>
+        <input type="password" name="password" required autocomplete="new-password"><br><br>
 
         <button type="submit">Login</button>
     </form>
 
     <p><a href="{{ url_for('auth.register') }}">Noch kein Konto? Jetzt registrieren</a></p>
+</div>
 </body>
-</html>
+{% endblock %}
