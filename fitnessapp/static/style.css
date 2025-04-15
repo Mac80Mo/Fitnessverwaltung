@@ -4,7 +4,7 @@ html, body {
     margin: 0;
     display: flex;
     flex-direction: column;
-    background-color: #1e1e1e;
+    background-color: #121212;
     color: #f0f0f0;
     font-family: system-ui, sans-serif;
     line-height: 1.6;
@@ -18,7 +18,7 @@ header {
     width: 100%;
     height: 80px;
     z-index: 10;
-    background-color: #121212;
+    background-color: black;
     padding: 1.2rem 2rem;
     border-bottom: 2px solid #2a2a2a;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
@@ -54,7 +54,7 @@ footer {
     width: 100%;
     height: 60px;
     z-index: 10;
-    background-color: #121212;
+    background-color: black;
     color: #888;
     padding: 0.8rem 2rem;
     text-align: center;
@@ -65,10 +65,7 @@ footer {
 /* ---------- Hauptbereich mit Abstand für Header/Footer ---------- */
 main {
     flex: 1 0 auto;
-    padding-top: 100px;
-    padding-bottom: 100px;
-    padding-left:20px;
-    padding-right: 20px;
+    padding: 100px 20px 100px; /* oben/unten/seitlich */
 }
 
 /* ---------- Diagramm-Vorschauen ---------- */
@@ -131,15 +128,61 @@ button, .btn {
     border-radius: 8px;
     cursor: pointer;
     transition: background 0.2s ease-in-out;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1rem;
+    text-align: center;
 }
 
 button:hover, .btn:hover {
     background-color: #666;
 }
 
+/* Spezielle Button-Stile */
+.btn-primary {
+    background-color: #0033cc;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #0055ff;
+}
+
+.btn-danger {
+    background-color: #8B0000;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: #cc0000;
+}
+
+.btn-small {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    background-color: darkgreen;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.btn-small:hover {
+    background-color: green;
+    text-decoration: none;
+}
+
+/* Optional: deaktivierte Buttons */
+button:disabled, .btn:disabled {
+    background-color: #555;
+    color: #aaa;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
 /* ---------- Formularfelder ---------- */
 input, select, textarea {
-    background-color: #2f2f2f;
+    background-color: #1e1e1e;
     color: #fff;
     border: 1px solid #555;
     border-radius: 6px;
@@ -154,50 +197,7 @@ input:focus, select:focus, textarea:focus {
     border-color: #888;
 }
 
-/* ---------- Responsive Design ---------- */
-@media (max-width: 768px) {
-    header nav a {
-        display: block;
-        margin-bottom: 10px;
-    }
-
-    main {
-        padding: 7rem 1rem 5rem; /* Etwas mehr Raum für mobile Header/Footer */
-    }
-
-    .chart-wrapper {
-        aspect-ratio: 4 / 3;
-    }
-}
-
-button, .btn {
-    background-color: darkblue;
-    color: #f0f0f0;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease-in-out;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 1rem;
-    text-align: center;
-}
-
-.btn-primary {
-    background-color: #0033cc;  /* Dunkelblau */
-    color: #fff;
-}
-
-.btn-primary:hover {
-    background-color: #0055ff;
-}
-
-
-button:hover, .btn:hover {
-    background-color: blue;
-}
-
+/* ---------- Formulare in Boxen ---------- */
 .form-box {
     max-width: 500px;
     margin: 0 auto;
@@ -217,25 +217,49 @@ button:hover, .btn:hover {
     font-weight: bold;
 }
 
-.form-box input,
-.form-box select,
-.form-box textarea {
-    margin-bottom: 1rem;
+/* ---------- Chart-Karten-Grid (Dashboard) ---------- */
+.card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
 }
 
-.btn-danger {
-    background-color: #8B0000; /* Dunkelrot */
-    color: #fff;
+.chart-card {
+    background-color: #1e1e1e;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    padding: 1rem;
+    width: 300px;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.chart-card:hover {
+    background-color: #2a2a2a;
+    transform: scale(1.02);
+}
+
+.chart-card iframe {
+    width: 100%;
+    height: 220px;
     border: none;
-    padding: 0.5rem 1rem;
     border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease-in-out;
-    text-decoration: none;
-    display: inline-block;
+    margin-bottom: 0.5rem;
 }
 
-.btn-danger:hover {
-    background-color: #cc0000; /* Helles Rot beim Hover */
-}
+/* ---------- Responsive Design ---------- */
+@media (max-width: 768px) {
+    header nav a {
+        display: block;
+        margin-bottom: 10px;
+    }
 
+    main {
+        padding: 7rem 1rem 5rem;
+    }
+
+    .chart-wrapper {
+        aspect-ratio: 4 / 3;
+    }
+}

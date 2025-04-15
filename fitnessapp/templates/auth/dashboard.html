@@ -23,32 +23,38 @@
 </ul>
 
 <hr>
-<h2>Aktivität: Zeit nach Sportart</h2>
-<div class="chart-wrapper">
-    <iframe src="{{ url_for('activities.activity_types_chart') }}" loading="lazy"></iframe>
-</div>
+<h2>Diagramm-Auswahl:</h2>
+<div class="card-grid">
+    
+    <div class="chart-card">
+        <h3>Gewicht & BMI Verlauf</h3>
+        <iframe src="{{ url_for('tracking.weight_chart') }}" loading="lazy"></iframe>
+        <a href="{{ url_for('tracking.weight_chart') }}" class="btn-small">Größere Ansicht</a>
+    </div>
 
-<hr>
-<h2>Aktivität: Dauer pro Tag</h2>
-<div class="chart-wrapper">
-    <iframe src="{{ url_for('activities.activity_chart') }}" loading="lazy"></iframe>
-</div>
+    <div class="chart-card">
+        <h3>Dauer pro Tag</h3>
+        <iframe src="{{ url_for('activities.activity_chart') }}" loading="lazy"></iframe>
+        <a href="{{ url_for('activities.activity_chart') }}" class="btn-small">Größere Ansicht</a>
+    </div>
 
-<hr>
-<h2>Distanz: Kilometer pro Tag</h2>
-<div class="chart-wrapper">
-    <iframe src="{{ url_for('activities.distance_per_day_chart') }}" loading="lazy"></iframe>
-</div>
+    <div class="chart-card">
+        <h3>Sportartenvergleich</h3>
+        <iframe src="{{ url_for('activities.activity_types_chart') }}" loading="lazy"></iframe>
+        <a href="{{ url_for('activities.activity_types_chart') }}" class="btn-small">Größere Ansicht</a>
+    </div>
 
-<hr>
-<h2>Kalorienverbrauch</h2>
-<div class="chart-wrapper">
-    <iframe src="{{ url_for('activities.calories_chart') }}" loading="lazy"></iframe>
-</div>
+    <div class="chart-card">
+        <h3>Kalorienverbrauch</h3>
+        <iframe src="{{ url_for('activities.calories_chart') }}" loading="lazy"></iframe>
+        <a href="{{ url_for('activities.calories_chart') }}" class="btn-small">Größere Ansicht</a>
+    </div>
 
-<hr>
-<h2>Gewicht & BMI Verlauf</h2>
-<div class="chart-wrapper">
-    <iframe src="{{ url_for('tracking.weight_chart') }}" loading="lazy"></iframe>
+    <div class="chart-card">
+        <h3>Kilometer pro Tag</h3>
+        <iframe src="{{ url_for('activities.distance_per_day_chart') }}" loading="lazy"></iframe>
+        <a href="{{ url_for('activities.distance_per_day_chart') }}" class="btn-small">Größere Ansicht</a>
+    </div>
+
 </div>
 {% endblock %}
