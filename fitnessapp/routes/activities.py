@@ -346,3 +346,97 @@ def combined_chart():
         heart_rates=heart_rates,   # Ø Puls pro Tag
         weights=weights            # Gewicht pro Tag
     )
+
+#####################################################################
+
+@activities_bp.route('/activities/bike-chart')
+def bike_chart():
+    if 'user_id' not in session:
+        flash('Bitte einloggen.', 'warning')
+        return redirect(url_for('auth.login'))
+    
+    from collections import defaultdict
+    from datetime import datetime
+    
+    user_id = session['user_id']
+    
+    # Nur Radfahren-Aktivitäten filtern
+    cycling_activities = Activity.query.filter_by(user_id=user_id, activity_type="Radfahren").all()
+    
+    # Gruppierung nach Tag
+    data = defaultdict(lambda: {'duration': 0, 'distance': 0, 'elevation': 0, 'hr': []})
+    
+    for a in cycling_activities:
+        key = a.date.strftime('%d.%m.%Y')
+        data[key]['duration'] += a.duration_min or 0
+        data[key]['distance'] += a.distance_km or 0
+        data[key]['elevation'] += a.elevation_gain or 0
+        if a.avg_heart_rate:
+            data[key]['hr'].append(a.avg_heart_rate)
+    
+    # Vorbereitung der Datenreihen
+    labels = sorted(data.keys())
+    durations = [data[d]['duration'] for d in labels]
+    distances = [data[d]['distance'] for d in labels]
+    elevations = [data[d]['elevation'] for d in labels]
+    heart_rates = [round(sum(data[d]['hr']) / len(data[d]['hr']), 1) if data[d]['hr'] else None for d in labels]
+    
+    return render_template(
+        'activities/bike_chart.html',
+        labels=labels,
+        durations=durations,
+        distances=distances,
+        elevations=elevations,
+        heart_rates=heart_rates
+    )
+    
+################################################################
+
+@activities_bp.route('/activities/run-chart')
+def run_chart():
+    if 'user_id' not in session:
+        flash('Bitte einloggen.', 'warning')
+        return redirect(url_for('auth.login'))
+
+    from collections import defaultdict
+    from datetime import datetime
+
+    user_id = session['user_id']
+    
+    # Nur Lauf-Aktivitäten filtern
+    activities = Activity.query.filter_by(user_id=user_id, activity_type='Laufen').all()
+
+    grouped = defaultdict(lambda: {'duration': 0, 'distance': 0, 'elevation': 0, 'hr': []})
+
+    for a in activities:
+        date_key = a.date.strftime('%d.%m.%Y')
+        grouped[date_key]['duration'] += a.duration_min or 0
+        grouped[date_key]['distance'] += a.distance_km or 0
+        grouped[date_key]['elevation'] += a.elevation_gain or 0
+        if a.avg_heart_rate:
+            grouped[date_key]['hr'].append(a.avg_heart_rate)
+
+    # 🔧 Hier: Sortiere nach echtem Datum, nicht nach alphabetisch
+    labels = sorted(grouped.keys(), key=lambda d: datetime.strptime(d, '%d.%m.%Y'))
+
+    # Entsprechend sortierte Werte extrahieren
+    durations = [grouped[d]['duration'] for d in labels]
+    distances = [grouped[d]['distance'] for d in labels]
+    elevations = [grouped[d]['elevation'] for d in labels]
+    heart_rates = [round(sum(grouped[d]['hr']) / len(grouped[d]['hr']), 1) if grouped[d]['hr'] else None for d in labels]
+
+    print("Lauf-Daten:")
+    for d in labels:
+        print(f"{d} → Zeit: {grouped[d]['duration']} min, Distanz: {grouped[d]['distance']} km, Höhenmeter: {grouped[d]['elevation']}, HR: {grouped[d]['hr']}")
+
+
+    return render_template(
+        'activities/run_chart.html',
+        labels=labels,
+        durations=durations,
+        distances=distances,
+        elevations=elevations,
+        heart_rates=heart_rates
+    )
+
+

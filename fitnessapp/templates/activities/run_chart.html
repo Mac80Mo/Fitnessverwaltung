@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Lauf-Aktivitäten</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1 style="text-align: center;">Laufen – Zeit, Distanz, Höhenmeter & Herzfrequenz</h1>
+
+    <div class="chart-wrapper" style="width: 95%; max-width: 1000px; margin: auto;">
+        <canvas id="runChart"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('runChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ labels | tojson }},
+                datasets: [
+                    {
+                        label: 'Zeit (Min)',
+                        data: {{ durations | tojson }},
+                        borderColor: 'blue',
+                        yAxisID: 'y',
+                    },
+                    {
+                        label: 'Distanz (km)',
+                        data: {{ distances | tojson }},
+                        borderColor: 'green',
+                        yAxisID: 'y1',
+                    },
+                    {
+                        label: 'Höhenmeter',
+                        data: {{ elevations | tojson }},
+                        borderColor: 'orange',
+                        yAxisID: 'y2',
+                    },
+                    {
+                        label: 'Herzfrequenz',
+                        data: {{ heart_rates | tojson }},
+                        borderColor: 'purple',
+                        yAxisID: 'y3',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                stacked: false,
+                scales: {
+                    y: {
+                        type: 'linear',
+                        position: 'left',
+                        title: { display: true, text: 'Minuten' },
+                        beginAtZero: true
+                    },
+                    y1: {
+                        type: 'linear',
+                        position: 'right',
+                        title: { display: true, text: 'Kilometer' },
+                        grid: { drawOnChartArea: false },
+                        beginAtZero: true
+                    },
+                    y2: {
+                        type: 'linear',
+                        position: 'left',
+                        offset: true,
+                        title: { display: true, text: 'Höhenmeter' },
+                        beginAtZero: true
+                    },
+                    y3: {
+                        type: 'linear',
+                        position: 'right',
+                        offset: true,
+                        title: { display: true, text: 'HF (bpm)' },
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
+    </script>
+
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="{{ url_for('auth.dashboard') }}">Zurück zum Dashboard</a>
+    </div>
+</body>
+</html>

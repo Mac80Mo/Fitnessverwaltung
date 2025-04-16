@@ -109,3 +109,4 @@ def delete_weight(id):
     db.session.commit()
     flash('Eintrag gelöscht.', 'info')
     return redirect(url_for('tracking.weight_list'))
+

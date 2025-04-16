@@ -74,6 +74,70 @@ def dashboard():
 
     # Alle Aktivitäten
     all_activities = user.activities
+    
+    ## Fortschrittsdaten
+    from datetime import timedelta
+    
+    ## Vergleichsteiträume
+    one_week_ago = today - timedelta(days=7)
+    two_weeks_ago = today - timedelta(days=14)
+    
+    first_day_this_month = today.replace(day=1)
+    last_month = (first_day_this_month - timedelta(days=1)).replace(day=1)
+    end_last_month = first_day_this_month - timedelta(days=1)
+    
+    ## Aktivitäten nach Zeiträumen filtern
+    activities_this_week = [a for a in all_activities if one_week_ago <= a.date.date() <= today]
+    activities_prev_week = [a for a in all_activities if two_weeks_ago <= a.date.date() < one_week_ago]
+
+    activities_this_month = [a for a in all_activities if first_day_this_month <= a.date.date() <= today]
+    activities_prev_month = [a for a in all_activities if last_month <= a.date.date() <= end_last_month]
+    
+    ## Summen berechnen
+    def sum_attr(data, attr):
+        return sum(getattr(a, attr) or 0 for a in data)
+    
+    dur_this_week = sum_attr(activities_this_week, 'duration_min')
+    dur_prev_week = sum_attr(activities_prev_week, 'duration_min')
+    
+    cal_this_week = sum_attr(activities_this_week, 'calories')
+    cal_prev_week = sum_attr(activities_prev_week, 'calories')
+    
+    km_this_week = sum_attr(activities_this_week, 'distance_km')
+    km_prev_week = sum_attr(activities_prev_week, 'distance_km')
+    
+    elev_this_week = sum_attr(activities_this_week, 'elevation_gain')
+    elev_prev_week = sum_attr(activities_prev_week, 'elevation_gain')
+    
+    dur_this_month = sum_attr(activities_this_month, 'duration_min')
+    dur_prev_month = sum_attr(activities_prev_month, 'duration_min')
+    
+    cal_this_month = sum_attr(activities_this_month, 'calories')
+    cal_prev_month = sum_attr(activities_prev_month, "calories")
+    
+    km_this_month = sum_attr(activities_this_month, 'distance_km')
+    km_prev_month = sum_attr(activities_prev_month, 'distance_km')
+    
+    elev_this_month = sum_attr(activities_this_month, 'elevation_gain')
+    elev_prev_month = sum_attr(activities_prev_month, 'elevation_gain')
+    
+    
+    
+    ## Prozentuale Änderung berechnen
+    def calc_change(new, old):
+        if old == 0:
+            return 100 if new > 0 else None
+        return round((new - old) / old * 100, 1)
+    
+    change_dur_week = calc_change(dur_this_week, dur_prev_week)
+    change_cal_week = calc_change(cal_this_week, cal_prev_week)
+    change_km_week = calc_change(km_this_week, km_prev_week)
+    change_elev_week = calc_change(elev_this_week, elev_prev_week)
+    change_dur_month = calc_change(dur_this_month, dur_prev_month)
+    change_cal_month = calc_change(cal_this_month, cal_prev_month)
+    change_km_month = calc_change(km_this_month, km_prev_month)
+    change_elev_month = calc_change(elev_this_month, elev_prev_month)
+    
 
     # Gesamtstatistiken berechnen
     total_duration = sum(a.duration_min or 0 for a in all_activities)
@@ -136,7 +200,15 @@ def dashboard():
         avg_elev_week=avg_elev_week,         
         avg_elev_month=avg_elev_month,       
         avg_heart_rate_all=avg_heart_rate_all,
-        avg_hr_today=avg_hr_today
+        avg_hr_today=avg_hr_today,
+        change_dur_week=change_dur_week,
+        change_cal_week=change_cal_week,
+        change_dur_month=change_dur_month,
+        change_cal_month=change_cal_month,
+        change_km_week=change_km_week,
+        change_km_month=change_km_month,
+        change_elev_week=change_elev_week,
+        change_elev_month=change_elev_month
     )
 
 # Logout

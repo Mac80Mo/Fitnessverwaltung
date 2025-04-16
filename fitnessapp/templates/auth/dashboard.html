@@ -4,7 +4,8 @@
 
 {% block content %}
 <h1>Willkommen zurück, {{ user.name }}!</h1>
-    
+ 
+
 <hr>
 <h2>Statistiken:</h2>
 <div class="card-grid">
@@ -75,6 +76,110 @@
 </div>
 
 <hr>
+
+<h2>Fortschrittsanalyse:</h2>
+<div class="card card-narrow">
+    <h2 style="text-align: center;">Tendenz</h2>
+
+    <!-- Aktivität Woche -->
+    <p>Aktivität (Woche)</p>
+    {% if change_dur_week is not none %}
+        <div class="progress-bar">
+            <div class="progress-fill {% if change_dur_week >= 0 %}positive{% else %}negative{% endif %}" style="width: {{ change_dur_week | abs }}%">
+                {{ '+' if change_dur_week >= 0 else '' }}{{ change_dur_week }}%
+            </div>
+        </div>
+    {% else %}
+        <p><em>Keine Vergleichsdaten</em></p>
+    {% endif %}
+
+    <!-- Kalorien Woche -->
+    <p>Kalorien (Woche)</p>
+    {% if change_cal_week is not none %}
+        <div class="progress-bar">
+            <div class="progress-fill {% if change_cal_week >= 0 %}positive{% else %}negative{% endif %}" style="width: {{ change_cal_week | abs }}%">
+                {{ '+' if change_cal_week >= 0 else '' }}{{ change_cal_week }}%
+            </div>
+        </div>
+    {% else %}
+        <p><em>Keine Vergleichsdaten</em></p>
+    {% endif %}
+
+    <!-- Kilometer Woche -->
+    <p>Kilometer (Woche)</p>
+    {% if change_km_week is not none %}
+        <div class="progress-bar">
+            <div class="progress-fill {% if change_km_week >= 0 %}positive{% else %}negative{% endif %}" style="width: {{ change_km_week | abs }}%">
+                {{ '+' if change_km_week >= 0 else '' }}{{ change_km_week }}%
+            </div>
+        </div>
+    {% else %}
+        <p><em>Keine Vergleichsdaten</em></p>
+    {% endif %}
+
+    <!-- Höhenmeter Woche -->
+    <p>Höhenmeter (Woche)</p>
+    {% if change_elev_week is not none %}
+        <div class="progress-bar">
+            <div class="progress-fill {% if change_elev_week >= 0 %}positive{% else %}negative{% endif %}" style="width: {{ change_elev_week | abs }}%">
+                {{ '+' if change_elev_week >= 0 else '' }}{{ change_elev_week }}%
+            </div>
+        </div>
+    {% else %}
+        <p><em>Keine Vergleichsdaten</em></p>
+    {% endif %}
+
+    <!-- Aktivität Monat -->
+    <p>Aktivität (Monat)</p>
+    {% if change_dur_month is not none %}
+        <div class="progress-bar">
+            <div class="progress-fill {% if change_dur_month >= 0 %}positive{% else %}negative{% endif %}" style="width: {{ change_dur_month | abs }}%">
+                {{ '+' if change_dur_month >= 0 else '' }}{{ change_dur_month }}%
+            </div>
+        </div>
+    {% else %}
+        <p><em>Keine Vergleichsdaten</em></p>
+    {% endif %}
+
+    <!-- Kalorien Monat -->
+    <p>Kalorien (Monat)</p>
+    {% if change_cal_month is not none %}
+        <div class="progress-bar">
+            <div class="progress-fill {% if change_cal_month >= 0 %}positive{% else %}negative{% endif %}" style="width: {{ change_cal_month | abs }}%">
+                {{ '+' if change_cal_month >= 0 else '' }}{{ change_cal_month }}%
+            </div>
+        </div>
+    {% else %}
+        <p><em>Keine Vergleichsdaten</em></p>
+    {% endif %}
+
+    <!-- Kilometer Monat -->
+    <p>Kilometer (Monat)</p>
+    {% if change_km_month is not none %}
+        <div class="progress-bar">
+            <div class="progress-fill {% if change_km_month >= 0 %}positive{% else %}negative{% endif %}" style="width: {{ change_km_month | abs }}%">
+                {{ '+' if change_km_month >= 0 else '' }}{{ change_km_month }}%
+            </div>
+        </div>
+    {% else %}
+        <p><em>Keine Vergleichsdaten</em></p>
+    {% endif %}
+
+    <!-- Höhenmeter Monat -->
+    <p>Höhenmeter (Monat)</p>
+    {% if change_elev_month is not none %}
+        <div class="progress-bar">
+            <div class="progress-fill {% if change_elev_month >= 0 %}positive{% else %}negative{% endif %}" style="width: {{ change_elev_month | abs }}%">
+                {{ '+' if change_elev_month >= 0 else '' }}{{ change_elev_month }}%
+            </div>
+        </div>
+    {% else %}
+        <p><em>Keine Vergleichsdaten</em></p>
+    {% endif %}
+</div>
+
+
+<hr>
 <h2>Diagramm-Auswahl:</h2>
 <div class="card-grid">
     
@@ -130,5 +235,26 @@
     <iframe src="{{ url_for('activities.combined_chart') }}" loading="lazy"></iframe>
     <a href="{{ url_for('activities.combined_chart') }}" class="btn-small">Größere Ansicht</a>
 </div>
+
+<br>
+<hr>
+<h2>Sportarten:</h2>
+<div class="card-grid">
+
+    <div class="chart-card-large">
+        <h3>Radfahren</h3>
+        <iframe src="{{ url_for('activities.bike_chart') }}" loading="lazy"></iframe>
+        <a href="{{ url_for('activities.bike_chart') }}" class="btn-small">Größere Ansicht</a>
+    </div>
+
+    <div class="chart-card-large">
+        <h3>Laufen</h3>
+        <iframe src="{{ url_for('activities.run_chart') }}" loading="lazy"></iframe>
+        <a href="{{ url_for('activities.run_chart') }}" class="btn-small">Größere Ansicht</a>
+    </div>
+    
+
+</div>
+
 
 {% endblock %}
