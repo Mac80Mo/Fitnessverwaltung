@@ -47,53 +47,70 @@ def login():
     
     return render_template('auth/login.html')
 
-# Dashboard (Testseite)
 @auth_bp.route('/dashboard')
 def dashboard():
     if 'user_id' not in session:
         flash('Bitte zuerst einloggen.', 'warning')
         return redirect(url_for('auth.login'))
     
+    from datetime import datetime
     user = User.query.get(session['user_id'])
-    
-    # Letztes Gewicht / BMI
+
+    # Letztes Gewicht und BMI berechnen
     weights = sorted(user.weights, key=lambda e: e.date)
     last_weight = weights[-1].weight_kg if weights else None
     height_m = user.height_cm / 100
     bmi = round(last_weight / (height_m ** 2), 2) if last_weight else None
-              
-    # Aktivitäten heute
-    from datetime import datetime
+
+    # Aktivitäten heute (Datum vergleichen)
     today = datetime.today().date()
     todays_activities = [a for a in user.activities if a.date.date() == today]
     duration_today = sum(a.duration_min or 0 for a in todays_activities)
     calories_today = sum(a.calories or 0 for a in todays_activities)
     distance_today = sum(a.distance_km or 0 for a in todays_activities)
-    
-    # Gesamtstatistik / Alle Aktivitäten
+    elevation_today = sum(a.elevation_gain or 0 for a in todays_activities)
+    hr_today = [a.avg_heart_rate for a in todays_activities if a.avg_heart_rate]
+    avg_hr_today = round(sum(hr_today) / len(hr_today), 1) if hr_today else None
+
+    # Alle Aktivitäten
     all_activities = user.activities
+
+    # Gesamtstatistiken berechnen
     total_duration = sum(a.duration_min or 0 for a in all_activities)
     total_calories = sum(a.calories or 0 for a in all_activities)
     total_distance = sum(a.distance_km or 0 for a in all_activities)
+    total_elevation = sum(a.elevation_gain or 0 for a in all_activities)
     
-    # NEU: Zeitstempel-Liste erstellen
+    # Aktive Tage ermitteln
     dates = [a.date.date() for a in all_activities]
+    active_days = len(set(dates))
     
+    # Zeitraum ermitteln für Durchschnitt pro Tag/Woche/Monat
     if dates:
-        # Zeitraum berechnen:
         first_date = min(dates)
         last_date = max(dates)
         num_days = (last_date - first_date).days + 1
         num_weeks = max(1, num_days // 7)
-        num_months = max(1, ((last_date.year - first_date.year) * 12 + last_date.month - first_date.month + 1))
-        
-        # Vorhandene Tage + Durchschnittszeiten
-        active_days = len(set(dates))
+        num_months = max(1, (last_date.year - first_date.year) * 12 + (last_date.month - first_date.month + 1))
+
         avg_per_day = round(total_duration / num_days, 1)
         avg_per_week = round(total_duration / num_weeks, 1)
         avg_per_month = round(total_duration / num_months, 1)
+
+        # Durchschnittliche Distanz und Höhenmeter pro Woche/Monat
+        avg_km_week = round(total_distance / num_weeks, 2)
+        avg_km_month = round(total_distance / num_months, 2)
+        avg_elev_week = round(total_elevation / num_weeks, 1)
+        avg_elev_month = round(total_elevation / num_months, 1)
     else:
-        avg_per_day = avg_per_week = avg_per_month = active_days = 0
+        avg_per_day = avg_per_week = avg_per_month = 0
+        avg_km_week = avg_km_month = avg_elev_week = avg_elev_month = 0
+
+    # Durchschnittswerte gesamt
+    avg_km = round(total_distance / active_days, 2) if active_days else 0
+    avg_elevation = round(total_elevation / active_days, 1) if active_days else 0
+    heart_rates_all = [a.avg_heart_rate for a in all_activities if a.avg_heart_rate]
+    avg_heart_rate_all = round(sum(heart_rates_all) / len(heart_rates_all), 1) if heart_rates_all else None
 
     return render_template(
         'auth/dashboard.html',
@@ -103,13 +120,23 @@ def dashboard():
         duration_today=duration_today,
         calories_today=calories_today,
         distance_today=distance_today,
+        elevation_today=elevation_today,
         total_duration=total_duration,
         total_calories=total_calories,
         total_distance=total_distance,
+        total_elevation=total_elevation,
         active_days=active_days,
         avg_per_day=avg_per_day,
         avg_per_week=avg_per_week,
-        avg_per_month=avg_per_month
+        avg_per_month=avg_per_month,
+        avg_km=avg_km,
+        avg_elevation=avg_elevation,
+        avg_km_week=avg_km_week,             
+        avg_km_month=avg_km_month,           
+        avg_elev_week=avg_elev_week,         
+        avg_elev_month=avg_elev_month,       
+        avg_heart_rate_all=avg_heart_rate_all,
+        avg_hr_today=avg_hr_today
     )
 
 # Logout

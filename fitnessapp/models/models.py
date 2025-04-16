@@ -37,4 +37,5 @@ class Activity(db.Model):
     calories = db.Column(db.Float)                                                  # Kalorienverbr. (Optional)
     distance_km = db.Column(db.Float)                                               # Kilometer bzw. Distanz
     date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))       # Datum d. Aktivität
-
+    elevation_gain = db.Column(db.Float)                                            # Höhenmeter
+    avg_heart_rate = db.Column(db.Integer)                                          # ds. Herzfrequenz

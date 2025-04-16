@@ -6,11 +6,13 @@
 
 <h2>Gesamt-Statistik</h2>
 <ul>
-    <li><strong>Gesamtdauer:</strong> {{ total_duration }} Minuten</li>
-    <li><strong>Verbrannte Kalorien:</strong> {{ total_calories }} kcal</li>
-    <li><strong>Gesamtdistanz:</strong> {{ total_distance }} km</li>
     <li><strong>Aktive Tage:</strong> {{ active_days }}</li>
+    <li><strong>Verbrannte Kalorien:</strong> {{ total_calories }} kcal</li>
+    <li><strong>Gesamtdauer:</strong> {{ total_duration }} Minuten</li>   
+    <li><strong>Gesamtdistanz:</strong> {{ total_distance }} km</li>
+    <li><strong>Gesamthöhenmeter:</strong> {{ total_elevation }} hm</li>
     <li><strong>Durchschnittl. Zeit pro aktivem Tag:</strong> {{ avg_per_day }} Minuten</li>
+    <li><strong>Durchschn. Herzfrequenz:</strong> {{ avg_heart_rate or "-"}} bpm</li>
 </ul>
 
 <br>
@@ -24,6 +26,8 @@
         <th>Aktivität</th>
         <th>Dauer (Min)</th>
         <th>Distanz (km)</th>
+        <th>Höhenmeter</th>
+        <th>Durchschn. Puls</th>
         <th>Kalorien</th>
         <th>Aktionen</th>
     </tr>
@@ -33,6 +37,8 @@
         <td>{{ a.activity_type }}</td>
         <td>{{ a.duration_min }}</td>
         <td>{{ a.distance_km or "-" }}</td>
+        <td>{{ a.elevation_gain or "-" }}</td>
+        <td>{{ a.avg_heart_rate or "-" }}</td>
         <td>{{ a.calories or "-" }}</td>
         <td>
             <a href="{{ url_for('activities.edit_activity', id=a.id) }}" class="btn btn-primary">Bearbeiten</a>
@@ -63,6 +69,13 @@
 
 <br>
 <a href="{{ url_for('auth.profile') }}">Zurück zum Profil</a>
+
+<br>
+<a href="{{ url_for('activities.elevation_per_day_chart') }}">Höhenmeter pro Tag anzeigen</a>
+
+<br>
+<a href="{{ url_for('activities.heartrate_per_day_chart') }}">Herzfrequenz pro Tag anzeigen</a>
+
 {% endblock %}
 
 

@@ -11,10 +11,17 @@
     <div class="card">
         <h2>Übersicht</h2>
         <ul>
+            <li><strong>Name:</strong> {{ user.name }}</li>
+            <br>
             <li><strong>Alter:</strong> {{ user.age }} Jahre</li>
+            <br>
             <li><strong>Größe:</strong> {{ user.height_cm}} cm</li>
+            <br>
             <li><strong>Aktuelles Gewicht:</strong> {{ last_weight or "-" }} kg</li>
+            <br>
             <li><strong>BMI:</strong> {{ bmi or "-" }}</li>
+            <br>
+            <li><strong>Durchschn. Herzfrequenz:</strong> {{ avg_heart_rate_all or "-" }} bpm</li>
         </ul>
     </div>
 
@@ -22,8 +29,14 @@
         <h2>Aktivitäten heute</h2>
         <ul>
             <li><strong>Zeit:</strong> {{ duration_today }} Minuten</li>
+            <br>
             <li><strong>Kalorien:</strong> {{ calories_today }} kcal</li>
+            <br>
             <li><strong>Distanz:</strong> {{ distance_today }} km</li>
+            <br>
+            <li><strong>Höhenmeter:</strong> {{ elevation_today }} hm</li>
+            <br>
+            <li><strong>Herzfreuquenz:</strong> {{ avg_hr_today or "-" }} bpm</li>
         </ul>
     </div>
 
@@ -31,19 +44,31 @@
         <h2>Durchschnittliche Aktivität</h2>
         <ul>
             <li><strong>Täglich:</strong> {{ avg_per_day }} Minuten</li>
+            <li><strong>Distanz pro Tag:</strong> {{ avg_km }} km</li>
+            <li><strong>Höhenmeter pro Tag:</strong> {{ avg_elevation }} hm</li>
+            <br>
             <li><strong>Wöchentlich:</strong> {{ avg_per_week }} Minuten</li>
+            <li><strong>Distanz pro Woche:</strong> {{ avg_km_week }} km</li>
+            <li><strong>Höhenmeter pro Woche:</strong> {{ avg_elev_week }}</li>
+            <br>
             <li><strong>Monatlich:</strong> {{ avg_per_month }} Minuten</li>
+            <li><strong>Distanz pro Monat:</strong> {{ avg_km_month }} km</li>
+            <li><strong>Höhenmeter pro Monat</strong> {{ avg_elev_month }} hm</li>
         </ul>
     </div>
 
     <div class="card">
         <h2>Aktivitäten gesamt</h2>
         <ul>
-            <li><strong>Gesamtdauer:</strong> {{ total_duration }} Minuten</li>
-            <li><strong>Verbrannte Kalorien:</strong> {{ total_calories }} kcal</li>
-            <li><strong>Gesamtdistanz:</strong> {{ total_distance }} km</li>
             <li><strong>Aktive Tage:</strong> {{ active_days }}</li>
-            <li><strong>Durchschnittl. Zeit pro aktivem Tag:</strong> {{ avg_per_day }} Minuten</li>
+            <br>
+            <li><strong>Gesamtdauer:</strong> {{ total_duration }} Minuten</li>
+            <br>
+            <li><strong>Verbrannte Kalorien:</strong> {{ total_calories }} kcal</li>
+            <br>
+            <li><strong>Gesamtdistanz:</strong> {{ total_distance }} km</li>
+            <br>
+            <li><strong>Gesamthöhenmeter:</strong> {{ total_elevation }} hm</li>
         </ul>
     </div>
 
@@ -82,6 +107,17 @@
         <iframe src="{{ url_for('activities.distance_per_day_chart') }}" loading="lazy"></iframe>
         <a href="{{ url_for('activities.distance_per_day_chart') }}" class="btn-small">Größere Ansicht</a>
     </div>
+
+    <div class="chart-card">
+        <h3>Höhenmeter pro Tag</h3>
+        <iframe src="{{ url_for('activities.elevation_per_day_chart') }}" loading="lazy"></iframe>
+        <a href="{{ url_for('activities.elevation_per_day_chart') }}" class="btn-small">Größere Ansicht</a>
+    </div>
+
+    <div class="chart-card">
+        <h3>Herzfrequenz pro Tag</h3>
+        <iframe src="{{ url_for('activities.heartrate_per_day_chart') }}" loading="lazy"></iframe>
+        <a href="{{ url_for('activities.heartrate_per_day_chart') }}" class="btn-small">Größere Ansicht</a>
 
 </div>
 {% endblock %}

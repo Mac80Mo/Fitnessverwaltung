@@ -13,11 +13,17 @@
         <label>Dauer (Minuten):</label>
         <input type="number" name="duration_min" step="1" value="{{ activity.duration_min }}" required>
 
-        <label>Kalorien:</label>
-        <input type="number" name="calories" step="1" value="{{ activity.calories or '' }}">
-
         <label>Distanz (km):</label>
         <input type="number" name="kilometers" step="0.1" value="{{ activity.kilometers or '' }}">
+
+        <label>Höhenmeter (optional):</label>
+        <input type="number" name="elevation_gain" step="0.1" value="{{ activity.elevation_gain or '' }}">
+
+        <label>Kalorien (optional):</label>
+        <input type="number" name="calories" step="1" value="{{ activity.calories or '' }}">
+
+        <label>Durchschn. Herzfrequenz (optional):</label>
+        <input type="number" name="avg_heart_rate" value="{{ activity.avg_heart_rate or '' }}">
 
         <button type="submit" class="btn btn-danger">Änderungen speichern</button>
     </form>

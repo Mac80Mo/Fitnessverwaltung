@@ -18,12 +18,18 @@ def add_activity():
         distance = request.form.get('distance_km', type=float)
         calories = request.form.get('calories', type=float)
         
+        # Nachtrag (Höhenmeter & Herzfrequenz)
+        elevation = request.form.get('elevation_gain', type=float)      # Höhenmeter
+        heart_rate = request.form.get('avg_heart_rate', type=int)
+        
         activity = Activity(
             user_id=session['user_id'],
             activity_type=activity_type,
             duration_min=duration,
             distance_km=distance,
-            calories=calories
+            calories=calories,
+            elevation_gain=elevation,
+            avg_heart_rate=heart_rate
         )
         
         db.session.add(activity)
@@ -46,6 +52,10 @@ def activity_list():
     total_calories = sum(a.calories or 0 for a in activities)
     total_distance = sum(a.distance_km or 0 for a in activities)
     
+    total_elevation = sum(a.elevation_gain or 0 for a in activities)
+    heart_rates = [a.avg_heart_rate for a in activities if a.avg_heart_rate]
+    avg_heart_rate = round(sum(heart_rates) / len(heart_rates), 1) if heart_rates else None
+    
     # Anzahl aktiver Tag
     days = {a.date.date() for a in activities}
     active_days = len(days)
@@ -60,7 +70,9 @@ def activity_list():
         total_calories=total_calories,
         total_distance=total_distance,
         active_days=active_days,
-        avg_per_day=avg_per_day
+        avg_per_day=avg_per_day,
+        total_elevation=total_elevation,
+        avg_heart_rate=avg_heart_rate
     )
 
 
@@ -178,6 +190,8 @@ def edit_activity(id):
         activity.duration_min = float(request.form['duration_min'])
         activity.calories = float(request.form['calories']) if request.form['calories'] else None
         activity.distance_km = float(request.form['kilometers']) if request.form['kilometers'] else None
+        activity.elevation_gain = request.form.get('elevation_gain', type=float)    # Höhenmeter
+        activity.avg_heart_rate = request.form.get('avg_heart_rate', type=int)
         db.session.commit()
         flash('Aktivität aktualisiert.', 'success')
         return redirect(url_for('activities.activity_list'))
@@ -197,3 +211,48 @@ def delete_activity(id):
     flash('Aktivität gelöscht.', 'info')
     return redirect(url_for('activities.activity_list'))
 
+@activities_bp.route('/avtivities/elevation-per-day')
+def elevation_per_day_chart():
+    if 'user_id' not in session:
+        flash('Bitte zuerst einloggen.', 'warning')
+        return redirect(url_for('auth.login'))
+    
+    from collections import defaultdict
+    activities = Activity.query.filter_by(user_id=session['user_id']).all()
+    
+    grouped = defaultdict(float)
+    for a in activities:
+        if a.elevation_gain:
+            tag = a.date.strftime('%d.%m.%Y')
+            grouped[tag] += a.elevation_gain
+    
+    labels = list(grouped.keys())
+    elevations = list(grouped.values())
+    
+    return render_template('activities/elevation_per_day_chart.html', labels=labels, elevations=elevations)
+
+
+@activities_bp.route('/activities/heartrate-per-day')
+def heartrate_per_day_chart():
+    if 'user_id' not in session:
+        flash('Bitte zuerst einloggen.', 'warning')
+        return redirect(url_for('auth.login'))
+    
+    from collections import defaultdict
+    activities = Activity.query.filter_by(user_id=session['user_id']).all()
+    
+    grouped = defaultdict(list)
+    for a in activities:
+        if a.avg_heart_rate:
+            tag = a.date.strftime('%d.%m.%Y')
+            grouped[tag].append(a.avg_heart_rate)
+    
+    # Durchschnitt pro Tag berechnen
+    labels = []
+    averages = []
+    for tag, values in grouped.items():
+        labels.append(tag)
+        avg = round(sum(values) / len(values), 1)
+        averages.append(avg)
+        
+    return render_template('activities/heartrate_per_day_chart.html', labels=labels, averages=averages)
