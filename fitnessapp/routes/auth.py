@@ -54,38 +54,62 @@ def dashboard():
         flash('Bitte zuerst einloggen.', 'warning')
         return redirect(url_for('auth.login'))
     
-    flash('Flash funktioniert!', 'success')
-    
     user = User.query.get(session['user_id'])
     
-    # Letztes Gewicht
+    # Letztes Gewicht / BMI
     weights = sorted(user.weights, key=lambda e: e.date)
     last_weight = weights[-1].weight_kg if weights else None
-    
-    # BMI
-    bmi = None
-    if last_weight:
-        height_m = user.height_cm / 100
-        bmi = round(last_weight / (height_m ** 2), 2)
-    
+    height_m = user.height_cm / 100
+    bmi = round(last_weight / (height_m ** 2), 2) if last_weight else None
+              
     # Aktivitäten heute
-    today = date.today()
-    today_activities = [
-        a for a in user.activities if a.date.date() == today
-    ]
+    from datetime import datetime
+    today = datetime.today().date()
+    todays_activities = [a for a in user.activities if a.date.date() == today]
+    duration_today = sum(a.duration_min or 0 for a in todays_activities)
+    calories_today = sum(a.calories or 0 for a in todays_activities)
+    distance_today = sum(a.distance_km or 0 for a in todays_activities)
     
-    duration_today = sum(a.duration_min or 0 for a in today_activities)
-    calories_today = sum(a.calories or 0 for a in today_activities)
-    distance_today = sum(a.distance_km or 0 for a in today_activities)
+    # Gesamtstatistik / Alle Aktivitäten
+    all_activities = user.activities
+    total_duration = sum(a.duration_min or 0 for a in all_activities)
+    total_calories = sum(a.calories or 0 for a in all_activities)
+    total_distance = sum(a.distance_km or 0 for a in all_activities)
     
+    # NEU: Zeitstempel-Liste erstellen
+    dates = [a.date.date() for a in all_activities]
+    
+    if dates:
+        # Zeitraum berechnen:
+        first_date = min(dates)
+        last_date = max(dates)
+        num_days = (last_date - first_date).days + 1
+        num_weeks = max(1, num_days // 7)
+        num_months = max(1, ((last_date.year - first_date.year) * 12 + last_date.month - first_date.month + 1))
+        
+        # Vorhandene Tage + Durchschnittszeiten
+        active_days = len(set(dates))
+        avg_per_day = round(total_duration / num_days, 1)
+        avg_per_week = round(total_duration / num_weeks, 1)
+        avg_per_month = round(total_duration / num_months, 1)
+    else:
+        avg_per_day = avg_per_week = avg_per_month = active_days = 0
+
     return render_template(
-        'auth/dashboard.html', 
+        'auth/dashboard.html',
         user=user,
-        bmi=bmi,
         last_weight=last_weight,
+        bmi=bmi,
         duration_today=duration_today,
         calories_today=calories_today,
-        distance_today=distance_today
+        distance_today=distance_today,
+        total_duration=total_duration,
+        total_calories=total_calories,
+        total_distance=total_distance,
+        active_days=active_days,
+        avg_per_day=avg_per_day,
+        avg_per_week=avg_per_week,
+        avg_per_month=avg_per_month
     )
 
 # Logout

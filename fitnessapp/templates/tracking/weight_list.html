@@ -24,11 +24,19 @@
         <tr>
             <th>Datum</th>
             <th>Gewicht</th>
+            <th>Aktionen</th>
         </tr>
         {% for entry in entries %}
         <tr>
             <td>{{ entry.date.strftime('%d.%m.%Y %H:%M') }}</td>
             <td>{{ entry.weight_kg }}</td>
+            <td>
+                <a href="{{ url_for('tracking.edit_weight', id=entry.id) }}" class="btn btn-primary">Bearbeiten</a>
+
+                <form action="{{ url_for('tracking.delete_weight', id=entry.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Eintrag wirklich löschen?');">
+                    <button type="submit" class="btn btn-danger">Löschen</button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </table>

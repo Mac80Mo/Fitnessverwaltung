@@ -98,6 +98,11 @@ main {
     transition: all 0.3s ease;
 }
 
+.card:hover {
+    transform: scale(1.02);
+    background-color: #333333
+}
+
 /* ---------- Tabellen ---------- */
 table {
     width: 100%;
@@ -160,7 +165,7 @@ button:hover, .btn:hover {
 .btn-small {
     padding: 0.4rem 0.8rem;
     font-size: 0.9rem;
-    background-color: darkgreen;
+    background-color: #444;
     color: white;
     border-radius: 6px;
     text-decoration: none;
@@ -168,7 +173,7 @@ button:hover, .btn:hover {
 }
 
 .btn-small:hover {
-    background-color: green;
+    background-color: #666;
     text-decoration: none;
 }
 

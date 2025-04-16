@@ -59,3 +59,53 @@ def weight_chart():
     bmis = [round(weight / (height_m ** 2), 2) for weight in weights]
     
     return render_template('tracking/weight_chart.html', labels=labels, weights=weights, bmis=bmis)
+
+@tracking_bp.route('/weight/edit/<int:id>', methods=['GET', 'POST'])
+def edit_weight(id):
+    if 'user_id' not in session:
+        flash('Bitte zuerst einloggen.', 'warning')
+        return redirect(url_for('auth.login'))
+    
+    entry = WeightEntry.query.get_or_404(id)
+    
+    # Sicherstellen, dass der Eintrag dem eingeloggten User gehört
+    if entry.user_id != session['user_id']:
+        flash('Zugriff verweigert.', 'danger')
+        return redirect(url_for('tracking.weight_list'))
+    
+    if request.method == 'POST':
+        try:
+            weight = float(request.form['weight'])
+            
+            if weight <= 0:
+                flash('Gewicht muss größer als 0 sein!', 'danger')
+                return redirect(request.url)
+            
+            entry.weight_kg = float(request.form['weight'])
+            db.session.commit()
+            flash('Eintrag erfolgreich aktualisiert.', 'success')
+            return redirect(url_for('tracking.weight_list'))
+        
+        except ValueError:
+            flash('Ungültiger Wert.', 'danger')
+    
+    return render_template('tracking/edit_weight.html', entry=entry)
+
+
+@tracking_bp.route('/weight/delete/<int:id>', methods=['POST'])
+def delete_weight(id):
+    if 'user_id' not in session:
+        flash('Bitte zuerst einloggen.', 'warning')
+        return redirect(url_for('auth.login'))
+
+    entry = WeightEntry.query.get_or_404(id)
+    
+    # Schutz: Fremde Einträge dürfen nicht gelöscht werden
+    if entry.user_id != session['user_id']:
+        flash('Zugriff verweigert', 'danger')
+        return redirect(url_for('tracking.weight_list'))
+    
+    db.session.delete(entry)
+    db.session.commit()
+    flash('Eintrag gelöscht.', 'info')
+    return redirect(url_for('tracking.weight_list'))

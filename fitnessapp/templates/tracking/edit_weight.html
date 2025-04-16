@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Gewicht bearbeiten{% endblock %}
+
+{% block content %}
+<div class="form-box">
+    <h2>Gewichtseintrag bearbeiten</h2>
+    <form method="POST">
+        <label>Gewicht (in kg):</label><br>
+        <input type="number" name="weight" step="0.1" min="0.1" value="{{ entry.weight_kg }}" required><br>
+
+        <button type="submit" class="btn btn-primary">Speichern</button>
+        <a href="{{ url_for('tracking.weight_list') }}" class="btn">Zurück</a>
+    </form>
+</div>
+{% endblock %}

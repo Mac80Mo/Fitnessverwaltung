@@ -6,21 +6,48 @@
 <h1>Willkommen zurück, {{ user.name }}!</h1>
     
 <hr>
-<h2>Übersicht</h2>
-<ul>
-    <li><strong>Alter:</strong> {{ user.age }} Jahre</li>
-    <li><strong>Größe:</strong> {{ user.height_cm}} cm</li>
-    <li><strong>Aktuelles Gewicht:</strong> {{ last_weight or "-" }} kg</li>
-    <li><strong>BMI:</strong> {{ bmi or "-" }}</li>
-</ul>
+<h2>Statistiken:</h2>
+<div class="card-grid">
+    <div class="card">
+        <h2>Übersicht</h2>
+        <ul>
+            <li><strong>Alter:</strong> {{ user.age }} Jahre</li>
+            <li><strong>Größe:</strong> {{ user.height_cm}} cm</li>
+            <li><strong>Aktuelles Gewicht:</strong> {{ last_weight or "-" }} kg</li>
+            <li><strong>BMI:</strong> {{ bmi or "-" }}</li>
+        </ul>
+    </div>
 
-<hr>
-<h2>Aktivitäten heute</h2>
-<ul>
-    <li><strong>Zeit:</strong> {{ duration_today }} Minuten</li>
-    <li><strong>Kalorien:</strong> {{ calories_today }} kcal</li>
-    <li><strong>Distanz:</strong> {{ distance_today }} km</li>
-</ul>
+    <div class="card">
+        <h2>Aktivitäten heute</h2>
+        <ul>
+            <li><strong>Zeit:</strong> {{ duration_today }} Minuten</li>
+            <li><strong>Kalorien:</strong> {{ calories_today }} kcal</li>
+            <li><strong>Distanz:</strong> {{ distance_today }} km</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Durchschnittliche Aktivität</h2>
+        <ul>
+            <li><strong>Täglich:</strong> {{ avg_per_day }} Minuten</li>
+            <li><strong>Wöchentlich:</strong> {{ avg_per_week }} Minuten</li>
+            <li><strong>Monatlich:</strong> {{ avg_per_month }} Minuten</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Aktivitäten gesamt</h2>
+        <ul>
+            <li><strong>Gesamtdauer:</strong> {{ total_duration }} Minuten</li>
+            <li><strong>Verbrannte Kalorien:</strong> {{ total_calories }} kcal</li>
+            <li><strong>Gesamtdistanz:</strong> {{ total_distance }} km</li>
+            <li><strong>Aktive Tage:</strong> {{ active_days }}</li>
+            <li><strong>Durchschnittl. Zeit pro aktivem Tag:</strong> {{ avg_per_day }} Minuten</li>
+        </ul>
+    </div>
+
+</div>
 
 <hr>
 <h2>Diagramm-Auswahl:</h2>
