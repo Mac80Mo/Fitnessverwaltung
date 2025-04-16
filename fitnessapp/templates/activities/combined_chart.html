@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Kombinierter Chart</title>
+
+    <!-- Stylesheet laden (z. B. für Farben, Layouts, Buttons etc.) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Chart.js-Bibliothek laden – notwendig für das Zeichnen der Diagramme -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<!-- Hauptüberschrift des Charts, zentriert -->
+<h1 style="text-align: center;">Kombinierter Aktivitätsverlauf</h1>
+
+<!-- Container für das Chart-Element mit max. Breite und Zentrierung -->
+<div class="chart-wrapper" style="width: 100%; max-width: 1200px; margin: auto;">
+    <!-- Das HTML5-Canvas-Element, in dem Chart.js das Diagramm rendert -->
+    <canvas id="comboChart"></canvas>
+</div>
+
+<script>
+// Zugriff auf das Canvas-Rendering-Kontextobjekt (2D-Zeichenfläche)
+const ctx = document.getElementById('comboChart').getContext('2d');
+
+// Initialisierung eines neuen Diagramms mit Chart.js
+new Chart(ctx, {
+    type: 'line', // Liniendiagramm, da Zeitverläufe dargestellt werden
+    data: {
+        // X-Achsen-Beschriftungen (Datumsangaben)
+        labels: {{ labels | tojson }},
+
+        // Y-Datenreihen (verschiedene Aktivitätsmetriken)
+        datasets: [
+            {
+                label: 'Zeit (Min)',
+                data: {{ durations | tojson }},
+                borderColor: 'blue',
+                yAxisID: 'y', // eigene Y-Achse
+            },
+            {
+                label: 'Distanz (km)',
+                data: {{ distances | tojson }},
+                borderColor: 'green',
+                yAxisID: 'y1',
+            },
+            {
+                label: 'Höhenmeter',
+                data: {{ elevations | tojson }},
+                borderColor: 'orange',
+                yAxisID: 'y2',
+            },
+            {
+                label: 'Kalorien',
+                data: {{ calories | tojson }},
+                borderColor: 'red',
+                yAxisID: 'y3',
+            },
+            {
+                label: 'Herzfrequenz',
+                data: {{ heart_rates | tojson }},
+                borderColor: 'purple',
+                yAxisID: 'y4',
+            },
+            {
+                label: 'Gewicht',
+                data: {{ weights | tojson }},
+                borderColor: 'gray',
+                yAxisID: 'y5',
+                spanGaps: true // Fehlende Werte (z. B. keine Gewichtseinträge) überbrücken
+            }
+        ]
+    },
+    options: {
+        responsive: true, // Chart passt sich an Fenstergröße an
+        interaction: {
+            mode: 'index',     // alle Datenpunkte bei gleichem X-Wert hervorheben
+            intersect: false,  // auch anzeigen, wenn Maus nicht direkt trifft
+        },
+        stacked: false, // keine Überlagerung der Daten
+        scales: {
+            // Y-Achsen (eine für jede Einheit)
+            y: {
+                type: 'linear',
+                position: 'left',
+                title: { display: true, text: 'Minuten' }
+            },
+            y1: {
+                type: 'linear',
+                position: 'right',
+                title: { display: true, text: 'km' },
+                grid: { drawOnChartArea: false } // Gitterlinien dieser Achse nicht zeichnen
+            },
+            y2: {
+                type: 'linear',
+                position: 'left',
+                offset: true, // Platz für zusätzliche Achse schaffen
+                title: { display: true, text: 'Höhenmeter' }
+            },
+            y3: {
+                type: 'linear',
+                position: 'right',
+                offset: true,
+                title: { display: true, text: 'Kalorien' }
+            },
+            y4: {
+                type: 'linear',
+                position: 'left',
+                offset: true,
+                title: { display: true, text: 'HF' } // Herzfrequenz
+            },
+            y5: {
+                type: 'linear',
+                position: 'right',
+                offset: true,
+                title: { display: true, text: 'Gewicht' }
+            }
+        }
+    }
+});
+</script>
+
+<!-- Link zurück zum Dashboard, zentriert und mit Abstand -->
+<div style="text-align: center; margin-top: 2rem;">
+    <a href="{{ url_for('auth.dashboard') }}">Zurück zum Dashboard</a>
+</div>
+
+</body>
+</html>

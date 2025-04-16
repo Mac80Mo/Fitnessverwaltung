@@ -231,6 +231,8 @@ input:focus, select:focus, textarea:focus {
 }
 
 .chart-card {
+    flex: 1 1 calc(25% - 1.5rem);  /* 4 Karten = 100% / 4 */
+    max-width: calc(25% - 1.5rem);
     background-color: #1e1e1e;
     border-radius: 12px;
     box-shadow: 0 0 10px rgba(0,0,0,0.3);
@@ -240,9 +242,11 @@ input:focus, select:focus, textarea:focus {
     transition: transform 0.2s ease;
 }
 
-.chart-card:hover {
-    background-color: #2a2a2a;
+.chart-card:hover,
+.chart-card-large:hover {
     transform: scale(1.02);
+    transition: transform 0.2s ease;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 
 .chart-card iframe {
@@ -267,4 +271,73 @@ input:focus, select:focus, textarea:focus {
     .chart-wrapper {
         aspect-ratio: 4 / 3;
     }
+
+    .chart-card {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
 }
+
+/* Responsive: 2 Karten bei mittleren Bildschirmen */
+@media (max-width: 1024px) {
+    .chart-card {
+        flex: 1 1 calc(50% - 1rem);
+        max-width: calc(50% - 1rem);
+    }
+}
+
+/* Mobile: 1 Karte pro Zeile */
+@media (max-width: 600px) {
+    .chart-card {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+}
+
+.chart-container-full {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.chart-card-large {
+    background-color: #1e1e1e;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    padding: 1rem;
+    width: 100%;
+    max-width: 1200px;
+    text-align: center;
+}
+
+.chart-card-large iframe {
+    width: 100%;
+    height: 500px;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.chart-card-xl {
+    background-color: #1e1e1e;
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 3rem auto;
+    max-width: 1200px;
+    width: 95%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.chart-card-xl:hover {
+    transform: scale(1.01);
+}
+
+.chart-card-xl iframe {
+    width: 100%;
+    height: 480px;
+    border: none;
+    border-radius: 8px;
+}
+

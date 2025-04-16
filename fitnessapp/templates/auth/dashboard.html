@@ -118,6 +118,17 @@
         <h3>Herzfrequenz pro Tag</h3>
         <iframe src="{{ url_for('activities.heartrate_per_day_chart') }}" loading="lazy"></iframe>
         <a href="{{ url_for('activities.heartrate_per_day_chart') }}" class="btn-small">Größere Ansicht</a>
-
+    </div>
 </div>
+
+<br>
+<hr>
+<h2>Hauptdiagramm:</h2>
+
+<div class="chart-card chart-card-xl">
+    <h3>Kombo-Chart</h3>
+    <iframe src="{{ url_for('activities.combined_chart') }}" loading="lazy"></iframe>
+    <a href="{{ url_for('activities.combined_chart') }}" class="btn-small">Größere Ansicht</a>
+</div>
+
 {% endblock %}

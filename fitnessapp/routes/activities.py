@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from fitnessapp import db
-from fitnessapp.models.models import Activity
+from fitnessapp.models.models import Activity, WeightEntry
 from collections import defaultdict
 from datetime import datetime
 
@@ -256,3 +256,93 @@ def heartrate_per_day_chart():
         averages.append(avg)
         
     return render_template('activities/heartrate_per_day_chart.html', labels=labels, averages=averages)
+
+
+##################################################################
+
+# Route für den kombinierten Aktivitäts-Chart
+@activities_bp.route('/activities/combined-chart')
+def combined_chart():
+    # Prüfen, ob der Nutzer eingeloggt ist
+    if 'user_id' not in session:
+        flash('Bitte einloggen.', 'warning')  # Hinweis für den Nutzer
+        return redirect(url_for('auth.login'))  # Weiterleitung zur Login-Seite
+    
+    # Imports, die nur innerhalb der Funktion benötigt werden
+    from collections import defaultdict
+    from datetime import datetime
+
+    # Aktuelle Nutzer-ID aus der Session holen
+    user_id = session['user_id']
+    
+    # --- 1. Aktivitäten des Nutzers abfragen ---
+    activities = Activity.query.filter_by(user_id=user_id).all()
+
+    # defaultdict für die tägliche Aggregation (Standardwerte pro Tag):
+    # Jede Tages-Zeile besteht aus: Dauer, Distanz, Höhenmeter, Kalorien, Herzfrequenz-Liste
+    combined = defaultdict(lambda: {
+        'duration': 0,
+        'distance': 0,
+        'elevation': 0,
+        'calories': 0,
+        'hr': []  # Liste für mehrere Pulsangaben pro Tag
+    })
+
+    # --- 2. Aktivitäten pro Tag aggregieren ---
+    for a in activities:
+        key = a.date.strftime('%d.%m.%Y')  # Datum als String (z. B. '16.04.2025')
+
+        # Summierung der Werte (falls vorhanden, sonst 0)
+        combined[key]['duration'] += a.duration_min or 0
+        combined[key]['distance'] += a.distance_km or 0
+        combined[key]['elevation'] += a.elevation_gain or 0
+        combined[key]['calories'] += a.calories or 0
+
+        # Herzfrequenz nur aufnehmen, wenn vorhanden
+        if a.avg_heart_rate:
+            combined[key]['hr'].append(a.avg_heart_rate)
+
+    # --- 3. Gewichtsdaten des Nutzers abrufen ---
+    weights = WeightEntry.query.filter_by(user_id=user_id).all()
+
+    # Gewichtseinträge auf Tagesdatum abbilden (für einfache Zuordnung)
+    weight_map = {
+        w.date.strftime('%d.%m.%Y'): w.weight_kg
+        for w in weights
+    }
+
+    # --- 4. Daten in Listen für das Chart umwandeln ---
+
+    # Sortierte Liste aller Tages-Labels (X-Achse)
+    labels = sorted(combined.keys())
+
+    # Für jede Metrik wird eine Liste für das Chart erzeugt (geordnet nach Labels)
+    durations = [combined[d]['duration'] for d in labels]
+    distances = [combined[d]['distance'] for d in labels]
+    elevations = [combined[d]['elevation'] for d in labels]
+    calories = [combined[d]['calories'] for d in labels]
+
+    # Durchschnittlicher Puls pro Tag, falls Einträge vorhanden – sonst `None`
+    heart_rates = [
+        round(sum(combined[d]['hr']) / len(combined[d]['hr']), 1)
+        if combined[d]['hr'] else None
+        for d in labels
+    ]
+
+    # Gewicht aus `weight_map` übernehmen – falls für das Datum nicht vorhanden: `None`
+    weights = [
+        weight_map[d] if d in weight_map else None
+        for d in labels
+    ]
+
+    # --- 5. Übergabe der Daten an das HTML-Template (Chart.js) ---
+    return render_template(
+        'activities/combined_chart.html',
+        labels=labels,             # X-Achse
+        durations=durations,       # Zeit pro Tag
+        distances=distances,       # Kilometer pro Tag
+        elevations=elevations,     # Höhenmeter pro Tag
+        calories=calories,         # Kalorienverbrauch pro Tag
+        heart_rates=heart_rates,   # Ø Puls pro Tag
+        weights=weights            # Gewicht pro Tag
+    )
