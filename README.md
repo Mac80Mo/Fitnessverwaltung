@@ -1,4 +1,5 @@
-# V1 17.04.2025 -> to be continued (work in progress)
+
+
 ---
 
 ```markdown
@@ -24,14 +25,10 @@ Die Mitarbeitenden der Sportless GmbH sollen in der Lage sein, ihre Fitnessdaten
 ![Login Formular](screenshots/Screenshot-2025-04-17-084524.png)
 
 ### Dashboard
-![Dashboard Statistik](screenshots/Screenshot-2025-04-17-084622.png)
-
-![Dashboard Tendenz](screenshots/Screenshot-2025-04-17-084644.png)
-
-![Diagramm Auswahl](screenshots/Screenshot-2025-04-17-084714.png)
-
-![Kombo Chart](screenshots/Screenshot-2025-04-17-084732.png)
-
+![Dashboard Statistik](screenshots/Screenshot-2025-04-17-084622.png)  
+![Dashboard Tendenz](screenshots/Screenshot-2025-04-17-084644.png)  
+![Diagramm Auswahl](screenshots/Screenshot-2025-04-17-084714.png)  
+![Kombo Chart](screenshots/Screenshot-2025-04-17-084732.png)  
 ![Radfahren Und Laufen Chart](screenshots/Screenshot-2025-04-17-084754.png)
 
 ### Profil
@@ -87,12 +84,16 @@ Ich habe mich bei der Umsetzung dieses Projekts für **Python in Verbindung mit 
 - MySQL oder MariaDB
 - Git (optional)
 
+---
+
 ### 1. Projekt klonen
 
 ```bash
 git clone https://github.com/Mac80Mo/fitnessverwaltung.git
 cd fitnessverwaltung
 ```
+
+---
 
 ### 2. Virtuelle Umgebung anlegen
 
@@ -103,11 +104,15 @@ venv\Scripts\activate  # Windows
 source venv/bin/activate  # macOS/Linux
 ```
 
+---
+
 ### 3. Abhängigkeiten installieren
 
 ```bash
 pip install -r requirements.txt
 ```
+
+---
 
 ### 4. Datenbank vorbereiten
 
@@ -127,13 +132,15 @@ flask shell
 >>> exit()
 ```
 
+---
+
 ### 5. Anwendung starten
 
 ```bash
 python run.py
 ```
 
-Aufruf im Browser:
+📍 Im Browser öffnen:
 
 ```
 http://localhost:5000
@@ -145,9 +152,9 @@ http://localhost:5000
 
 - Python 3.x
 - Flask (Blueprints, Jinja2)
-- MySQL
-- Chart.js (Frontend)
-- HTML, CSS (responsive Design)
+- MySQL / MariaDB
+- Chart.js (Frontend-Visualisierung)
+- HTML, CSS (responsive UI)
 
 ---
 
@@ -160,7 +167,8 @@ http://localhost:5000
 
 ---
 
-> © 2025 – Sportless GmbH | Entwickler: Marcus M.
+> © 2025   
+> Entwickler: Marcus M.
 ```
 
 ---
