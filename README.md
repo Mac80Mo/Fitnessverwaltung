@@ -160,10 +160,7 @@ http://localhost:5000
 
 ## 🧩 Nächste Schritte
 
-- [ ] Export-/Importfunktion (CSV oder PDF)
-- [ ] Nutzerrollen & Mehrbenutzerfähigkeit
-- [ ] API für mobile Clients
-- [ ] Integration Ernährungstracker
+work in progress.
 
 ---
 
