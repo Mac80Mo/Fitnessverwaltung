@@ -1,6 +1,23 @@
 # V1 17.04.2025 -> to be continued (work in progress)
 ---
 
+```markdown
+# 🏋️‍♂️ Fitnessverwaltung – Sportless GmbH
+
+Ein webbasiertes System zur persönlichen Fitnessverwaltung. Die Anwendung wurde mit **Python**, **Flask** und **MySQL** entwickelt und ermöglicht Nutzer:innen, ihre Körperdaten, sportlichen Aktivitäten und Fortschritte übersichtlich zu erfassen und auszuwerten.
+
+---
+
+## 🔍 Ausgangssituation
+
+Die Mitarbeitenden der Sportless GmbH sollen in der Lage sein, ihre Fitnessdaten digital zu erfassen, visualisieren und auswerten zu können. Ziel ist eine modulare Webanwendung zur langfristigen Dokumentation von:
+
+- Gewicht & BMI
+- Aktivitäten (Laufen, Radfahren u.v.m.)
+- Fortschritten im Training
+
+---
+
 ## 📸 Screenshots
 
 ### Login
@@ -25,22 +42,6 @@
 
 ### Gewicht
 ![Gewicht](screenshots/Screenshot-2025-04-17-084852.png)
-
-
-```markdown
-# 🏋️‍♂️ Fitnessverwaltung – Sportless GmbH
-
-Ein webbasiertes System zur persönlichen Fitnessverwaltung. Die Anwendung wurde mit **Python**, **Flask** und **MySQL** entwickelt und ermöglicht Nutzer:innen, ihre Körperdaten, sportlichen Aktivitäten und Fortschritte übersichtlich zu erfassen und auszuwerten.
-
----
-
-## 🔍 Ausgangssituation
-
-Die Mitarbeitenden der Sportless GmbH sollen in der Lage sein, ihre Fitnessdaten digital zu erfassen, visualisieren und auswerten zu können. Ziel ist eine modulare Webanwendung zur langfristigen Dokumentation von:
-
-- Gewicht & BMI
-- Aktivitäten (Laufen, Radfahren u.v.m.)
-- Fortschritten im Training
 
 ---
 
