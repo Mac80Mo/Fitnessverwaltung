@@ -17,7 +17,7 @@ Die Mitarbeitenden der Sportless GmbH sollen in der Lage sein, ihre Fitnessdaten
 - Aktivitäten (Laufen, Radfahren u.v.m.)
 - Fortschritten im Training
 
----
+
 
 ## 📸 Screenshots
 
@@ -40,7 +40,7 @@ Die Mitarbeitenden der Sportless GmbH sollen in der Lage sein, ihre Fitnessdaten
 ### Gewicht
 ![Gewicht](screenshots/Screenshot-2025-04-17-084852.png)
 
----
+
 
 ## ✍️ Mein Take
 
