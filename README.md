@@ -117,18 +117,18 @@ http://localhost:5000
 ## 📸 Screenshots
 
 ### Login
-![Login_Formular](screenshots/Screenshot 2025-04-17-084524.png)
+![Login Formular](screenshots/Screenshot 2025-04-17-084524.png)
 
 ### Dashboard
-![Dashboard_Statistik](screenshots/Screenshot 2025-04-17-084622.png)
+![Dashboard Statistik](screenshots/Screenshot 2025-04-17-084622.png)
 
-![Dashboard_Tendenz](screenshots/Screenshot 2025-04-17-084644.png)
+![Dashboard Tendenz](screenshots/Screenshot 2025-04-17-084644.png)
 
-![Diagramm_Auswahl](screenshots/Screenshot 2025-04-17-084714.png)
+![Diagramm Auswahl](screenshots/Screenshot 2025-04-17-084714.png)
 
-![Kombo_Chart](screenshots/Screenshot 2025-04-17-084732.png)
+![Kombo Chart](screenshots/Screenshot 2025-04-17-084732.png)
 
-![Radfahren_Und_Laufen_Chart](screenshots/Screenshot 2025-04-17-084754.png)
+![Radfahren Und Laufen Chart](screenshots/Screenshot 2025-04-17-084754.png)
 
 ### Profil
 ![Profil](screenshots/Screenshot 2025-04-17-084816.png)
