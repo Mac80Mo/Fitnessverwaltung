@@ -2,7 +2,7 @@
 
 ---
 
-```markdown
+
 # 🏋️‍♂️ Fitnessverwaltung – Sportless GmbH
 
 Ein webbasiertes System zur persönlichen Fitnessverwaltung. Die Anwendung wurde mit **Python**, **Flask** und **MySQL** entwickelt und ermöglicht Nutzer:innen, ihre Körperdaten, sportlichen Aktivitäten und Fortschritte übersichtlich zu erfassen und auszuwerten.
@@ -169,7 +169,7 @@ http://localhost:5000
 
 > © 2025   
 > Entwickler: Marcus M.
-```
+
 
 ---
 
