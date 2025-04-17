@@ -1,6 +1,32 @@
 # V1 17.04.2025 -> to be continued (work in progress)
 ---
 
+## 📸 Screenshots
+
+### Login
+![Login Formular](screenshots/Screenshot-2025-04-17-084524.png)
+
+### Dashboard
+![Dashboard Statistik](screenshots/Screenshot-2025-04-17-084622.png)
+
+![Dashboard Tendenz](screenshots/Screenshot-2025-04-17-084644.png)
+
+![Diagramm Auswahl](screenshots/Screenshot-2025-04-17-084714.png)
+
+![Kombo Chart](screenshots/Screenshot-2025-04-17-084732.png)
+
+![Radfahren Und Laufen Chart](screenshots/Screenshot-2025-04-17-084754.png)
+
+### Profil
+![Profil](screenshots/Screenshot-2025-04-17-084816.png)
+
+### Aktivitäten
+![Aktivitäten](screenshots/Screenshot-2025-04-17-084837.png)
+
+### Gewicht
+![Gewicht](screenshots/Screenshot-2025-04-17-084852.png)
+
+
 ```markdown
 # 🏋️‍♂️ Fitnessverwaltung – Sportless GmbH
 
@@ -111,33 +137,6 @@ Aufruf im Browser:
 ```
 http://localhost:5000
 ```
-
----
-
-## 📸 Screenshots
-
-### Login
-![Login Formular](screenshots/Screenshot-2025-04-17-084524.png)
-
-### Dashboard
-![Dashboard Statistik](screenshots/Screenshot-2025-04-17-084622.png)
-
-![Dashboard Tendenz](screenshots/Screenshot-2025-04-17-084644.png)
-
-![Diagramm Auswahl](screenshots/Screenshot-2025-04-17-084714.png)
-
-![Kombo Chart](screenshots/Screenshot-2025-04-17-084732.png)
-
-![Radfahren Und Laufen Chart](screenshots/Screenshot-2025-04-17-084754.png)
-
-### Profil
-![Profil](screenshots/Screenshot-2025-04-17-084816.png)
-
-### Aktivitäten
-![Aktivitäten](screenshots/Screenshot-2025-04-17-084837.png)
-
-### Gewicht
-![Gewicht](screenshots/Screenshot-2025-04-17-084852.png)
 
 ---
 
