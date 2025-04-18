@@ -5,6 +5,7 @@ from collections import defaultdict
 from datetime import datetime
 from fitnessapp.utils.decorators import login_required
 from fitnessapp.utils.db_helpers import get_user_activities, get_user_activities_by_type, get_user_activities_for_chart, get_user_activities_by_type_for_chart
+from fitnessapp.utils.helpers import format_date_local, sort_date_labels
 
 activities_bp = Blueprint('activities', __name__)
 
@@ -82,7 +83,7 @@ def activity_chart():
     # Gruppierung nach Datum (ohne Urzeit)   
     grouped = defaultdict(float)
     for a in activities:
-        tag = a.date.strftime('%d.%m.%Y')
+        tag = format_date_local(a.date)
         grouped[tag] += a.duration_min or 0
     
     labels = list(grouped.keys())
@@ -125,18 +126,19 @@ def calories_chart():
 
 @activities_bp.route('/activities/calories-per-day')
 @login_required
-def calories_per_day_chart():   
+def calories_per_day_chart():
     activities = get_user_activities_for_chart(session['user_id'])
-    
+
     grouped = defaultdict(float)
     for a in activities:
         if a.calories:
-            tag = a.date.strftime('%d.%m.%Y')
-            grouped[tag] += a.calories
-    
-    labels = list(grouped.keys())
-    calories = list(grouped.values())
-    
+            key = a.date.date()
+            grouped[key] += a.calories
+
+    sorted_dates = sorted(grouped.keys())
+    labels = [format_date_local(d) for d in sorted_dates]
+    calories = [grouped[d] for d in sorted_dates]
+
     return render_template('activities/calories_per_day.html', labels=labels, calories=calories)
 
 
@@ -149,11 +151,12 @@ def distance_per_day_chart():
     grouped = defaultdict(float)
     for a in activities:
         if a.distance_km:
-            tag = a.date.strftime('%d.%m.%Y')
-            grouped[tag] += a.distance_km
+            key = a.date.date()
+            grouped[key] += a.distance_km
     
-    labels = list(grouped.keys())
-    distances = list(grouped.values())
+    sorted_dates = sorted(grouped.keys())
+    labels = [format_date_local(d) for d in sorted_dates]
+    distances = [grouped[d] for d in sorted_dates]
     
     return render_template('activities/distance_per_day.html', labels=labels, distances=distances)
 
@@ -187,40 +190,40 @@ def delete_activity(id):
 
 @activities_bp.route('/avtivities/elevation-per-day')
 @login_required
-def elevation_per_day_chart():   
+def elevation_per_day_chart():
     activities = get_user_activities_for_chart(session['user_id'])
-    
+
     grouped = defaultdict(float)
     for a in activities:
         if a.elevation_gain:
-            tag = a.date.strftime('%d.%m.%Y')
-            grouped[tag] += a.elevation_gain
-    
-    labels = list(grouped.keys())
-    elevations = list(grouped.values())
-    
+            key = a.date.date()
+            grouped[key] += a.elevation_gain
+
+    sorted_dates = sorted(grouped.keys())
+    labels = [format_date_local(d) for d in sorted_dates]
+    elevations = [grouped[d] for d in sorted_dates]
+
     return render_template('activities/elevation_per_day_chart.html', labels=labels, elevations=elevations)
 
 
 @activities_bp.route('/activities/heartrate-per-day')
 @login_required
-def heartrate_per_day_chart():   
+def heartrate_per_day_chart():
     activities = get_user_activities_for_chart(session['user_id'])
-    
+
     grouped = defaultdict(list)
     for a in activities:
         if a.avg_heart_rate:
-            tag = a.date.strftime('%d.%m.%Y')
-            grouped[tag].append(a.avg_heart_rate)
-    
-    # Durchschnitt pro Tag berechnen
-    labels = []
-    averages = []
-    for tag, values in grouped.items():
-        labels.append(tag)
-        avg = round(sum(values) / len(values), 1)
-        averages.append(avg)
-        
+            key = a.date.date()
+            grouped[key].append(a.avg_heart_rate)
+
+    sorted_dates = sorted(grouped.keys())
+    labels = [format_date_local(d) for d in sorted_dates]
+    averages = [
+        round(sum(grouped[d]) / len(grouped[d]), 1)
+        for d in sorted_dates
+    ]
+
     return render_template('activities/heartrate_per_day_chart.html', labels=labels, averages=averages)
 
 
@@ -230,109 +233,92 @@ def heartrate_per_day_chart():
 @activities_bp.route('/activities/combined-chart')
 @login_required
 def combined_chart():   
-    # Aktuelle Nutzer-ID aus der Session holen
     user_id = session['user_id']
-    
-    # --- 1. Aktivitäten des Nutzers abfragen ---
-    activities = get_user_activities(session['user_id'])
+    activities = get_user_activities(user_id)
 
-    # defaultdict für die tägliche Aggregation (Standardwerte pro Tag):
-    # Jede Tages-Zeile besteht aus: Dauer, Distanz, Höhenmeter, Kalorien, Herzfrequenz-Liste
+    # Aggregation der Aktivitätsdaten (Schlüssel: datetime.date)
     combined = defaultdict(lambda: {
         'duration': 0,
         'distance': 0,
         'elevation': 0,
         'calories': 0,
-        'hr': []  # Liste für mehrere Pulsangaben pro Tag
+        'hr': []
     })
 
-    # --- 2. Aktivitäten pro Tag aggregieren ---
     for a in activities:
-        key = a.date.strftime('%d.%m.%Y')  # Datum als String (z. B. '16.04.2025')
-
-        # Summierung der Werte (falls vorhanden, sonst 0)
+        key = a.date.date()  # wichtig: echtes Datum als Schlüssel
         combined[key]['duration'] += a.duration_min or 0
         combined[key]['distance'] += a.distance_km or 0
         combined[key]['elevation'] += a.elevation_gain or 0
         combined[key]['calories'] += a.calories or 0
-
-        # Herzfrequenz nur aufnehmen, wenn vorhanden
         if a.avg_heart_rate:
             combined[key]['hr'].append(a.avg_heart_rate)
 
-    # --- 3. Gewichtsdaten des Nutzers abrufen ---
-    weights = WeightEntry.query.filter_by(user_id=user_id).all()
+    # Gewichtsdaten abrufen, ebenfalls mit .date() als Schlüssel
+    weight_entries = WeightEntry.query.filter_by(user_id=user_id).all()
+    weight_map = {w.date.date(): w.weight_kg for w in weight_entries}
 
-    # Gewichtseinträge auf Tagesdatum abbilden (für einfache Zuordnung)
-    weight_map = {
-        w.date.strftime('%d.%m.%Y'): w.weight_kg
-        for w in weights
-    }
+    # Chronologisch sortierte Liste von Datumsschlüsseln
+    sorted_dates = sorted(combined.keys())
 
-    # --- 4. Daten in Listen für das Chart umwandeln ---
+    # X-Achsen-Labels: formatiert
+    labels = [format_date_local(d) for d in sorted_dates]
 
-    # Sortierte Liste aller Tages-Labels (X-Achse)
-    labels = sorted(combined.keys())
-
-    # Für jede Metrik wird eine Liste für das Chart erzeugt (geordnet nach Labels)
-    durations = [combined[d]['duration'] for d in labels]
-    distances = [combined[d]['distance'] for d in labels]
-    elevations = [combined[d]['elevation'] for d in labels]
-    calories = [combined[d]['calories'] for d in labels]
-
-    # Durchschnittlicher Puls pro Tag, falls Einträge vorhanden – sonst `None`
+    # Y-Achsendaten
+    durations = [combined[d]['duration'] for d in sorted_dates]
+    distances = [combined[d]['distance'] for d in sorted_dates]
+    elevations = [combined[d]['elevation'] for d in sorted_dates]
+    calories = [combined[d]['calories'] for d in sorted_dates]
     heart_rates = [
-        round(sum(combined[d]['hr']) / len(combined[d]['hr']), 1)
-        if combined[d]['hr'] else None
-        for d in labels
+        round(sum(combined[d]['hr']) / len(combined[d]['hr']), 1) if combined[d]['hr'] else None
+        for d in sorted_dates
     ]
+    weights = [weight_map.get(d) for d in sorted_dates]
 
-    # Gewicht aus `weight_map` übernehmen – falls für das Datum nicht vorhanden: `None`
-    weights = [
-        weight_map[d] if d in weight_map else None
-        for d in labels
-    ]
-
-    # --- 5. Übergabe der Daten an das HTML-Template (Chart.js) ---
     return render_template(
         'activities/combined_chart.html',
-        labels=labels,             # X-Achse
-        durations=durations,       # Zeit pro Tag
-        distances=distances,       # Kilometer pro Tag
-        elevations=elevations,     # Höhenmeter pro Tag
-        calories=calories,         # Kalorienverbrauch pro Tag
-        heart_rates=heart_rates,   # Ø Puls pro Tag
-        weights=weights            # Gewicht pro Tag
+        labels=labels,
+        durations=durations,
+        distances=distances,
+        elevations=elevations,
+        calories=calories,
+        heart_rates=heart_rates,
+        weights=weights
     )
 
 #####################################################################
 
 @activities_bp.route('/activities/bike-chart')
 @login_required
-def bike_chart():        
+def bike_chart():
     user_id = session['user_id']
     
     # Nur Radfahren-Aktivitäten filtern
     activities = get_user_activities_by_type_for_chart(user_id, "Radfahren")
     
-    # Gruppierung nach Tag
+    # Gruppierung nach echtem Datum (datetime.date)
     data = defaultdict(lambda: {'duration': 0, 'distance': 0, 'elevation': 0, 'hr': []})
     
     for a in activities:
-        key = a.date.strftime('%d.%m.%Y')
+        key = a.date.date()  #echtes Datum ohne Uhrzeit
         data[key]['duration'] += a.duration_min or 0
         data[key]['distance'] += a.distance_km or 0
         data[key]['elevation'] += a.elevation_gain or 0
         if a.avg_heart_rate:
             data[key]['hr'].append(a.avg_heart_rate)
     
-    # Vorbereitung der Datenreihen
-    labels = sorted(data.keys())
-    durations = [data[d]['duration'] for d in labels]
-    distances = [data[d]['distance'] for d in labels]
-    elevations = [data[d]['elevation'] for d in labels]
-    heart_rates = [round(sum(data[d]['hr']) / len(data[d]['hr']), 1) if data[d]['hr'] else None for d in labels]
-    
+    # Sortierte Datumsliste
+    sorted_dates = sorted(data.keys())
+
+    # Formatierte Labels für das Chart
+    labels = [format_date_local(d) for d in sorted_dates]
+
+    # Datenreihen aufbauen
+    durations = [data[d]['duration'] for d in sorted_dates]
+    distances = [data[d]['distance'] for d in sorted_dates]
+    elevations = [data[d]['elevation'] for d in sorted_dates]
+    heart_rates = [round(sum(data[d]['hr']) / len(data[d]['hr']), 1) if data[d]['hr'] else None for d in sorted_dates]
+
     return render_template(
         'activities/bike_chart.html',
         labels=labels,
@@ -352,29 +338,27 @@ def run_chart():
     # Nur Lauf-Aktivitäten filtern
     activities = get_user_activities_by_type_for_chart(user_id, "Laufen")
 
+    # Gruppierung nach echtem Datum
     grouped = defaultdict(lambda: {'duration': 0, 'distance': 0, 'elevation': 0, 'hr': []})
 
     for a in activities:
-        date_key = a.date.strftime('%d.%m.%Y')
-        grouped[date_key]['duration'] += a.duration_min or 0
-        grouped[date_key]['distance'] += a.distance_km or 0
-        grouped[date_key]['elevation'] += a.elevation_gain or 0
+        key = a.date.date()  # ✅ echtes Datum als Key
+        grouped[key]['duration'] += a.duration_min or 0
+        grouped[key]['distance'] += a.distance_km or 0
+        grouped[key]['elevation'] += a.elevation_gain or 0
         if a.avg_heart_rate:
-            grouped[date_key]['hr'].append(a.avg_heart_rate)
+            grouped[key]['hr'].append(a.avg_heart_rate)
 
-    # Hier: Sortiere nach echtem Datum, nicht nach alphabetisch
-    labels = sorted(grouped.keys(), key=lambda d: datetime.strptime(d, '%d.%m.%Y'))
+    sorted_dates = sorted(grouped.keys())
+    labels = [format_date_local(d) for d in sorted_dates]
 
-    # Entsprechend sortierte Werte extrahieren
-    durations = [grouped[d]['duration'] for d in labels]
-    distances = [grouped[d]['distance'] for d in labels]
-    elevations = [grouped[d]['elevation'] for d in labels]
-    heart_rates = [round(sum(grouped[d]['hr']) / len(grouped[d]['hr']), 1) if grouped[d]['hr'] else None for d in labels]
-
-    print("Lauf-Daten:")
-    for d in labels:
-        print(f"{d} → Zeit: {grouped[d]['duration']} min, Distanz: {grouped[d]['distance']} km, Höhenmeter: {grouped[d]['elevation']}, HR: {grouped[d]['hr']}")
-
+    durations = [grouped[d]['duration'] for d in sorted_dates]
+    distances = [grouped[d]['distance'] for d in sorted_dates]
+    elevations = [grouped[d]['elevation'] for d in sorted_dates]
+    heart_rates = [
+        round(sum(grouped[d]['hr']) / len(grouped[d]['hr']), 1) if grouped[d]['hr'] else None
+        for d in sorted_dates
+    ]
 
     return render_template(
         'activities/run_chart.html',
