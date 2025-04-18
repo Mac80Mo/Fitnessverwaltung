@@ -4,6 +4,7 @@ from fitnessapp.models.models import Activity, WeightEntry
 from collections import defaultdict
 from datetime import datetime
 from fitnessapp.utils.decorators import login_required
+from fitnessapp.utils.db_helpers import get_user_activities, get_user_activities_by_type
 
 activities_bp = Blueprint('activities', __name__)
 
@@ -41,7 +42,7 @@ def add_activity():
 @activities_bp.route('/activities')
 @login_required
 def activity_list():   
-    activities = Activity.query.filter_by(user_id=session['user_id']).order_by(Activity.date.desc()).all()
+    activities = get_user_activities(session['user_id'])
     
     # Statistik berechnen
     total_duration = sum(a.duration_min or 0 for a in activities)
@@ -76,12 +77,9 @@ def activity_list():
 @login_required
 def activity_chart():   
     # Aktivitäten holen
-    activities = Activity.query.filter_by(user_id=session['user_id']).order_by(Activity.date.asc()).all()
+    activities = get_user_activities(session['user_id'])
     
-    # Gruppierung nach Datum (ohne Urzeit)
-    from collections import defaultdict
-    from datetime import datetime
-    
+    # Gruppierung nach Datum (ohne Urzeit)   
     grouped = defaultdict(float)
     for a in activities:
         tag = a.date.strftime('%d.%m.%Y')
@@ -96,9 +94,8 @@ def activity_chart():
 @activities_bp.route('/activities/types')
 @login_required
 def activity_types_chart():
-    activities = Activity.query.filter_by(user_id=session['user_id']).all()
+    activities = get_user_activities(session['user_id'])
     
-    from collections import defaultdict
     grouped = defaultdict(float)
     
     for a in activities:
@@ -112,9 +109,8 @@ def activity_types_chart():
 @activities_bp.route('/activities/calories')
 @login_required
 def calories_chart():   
-    activities = Activity.query.filter_by(user_id=session['user_id']).all()
+    activities = get_user_activities(session['user_id'])
     
-    from collections import defaultdict
     grouped = defaultdict(float)
     
     for a in activities:
@@ -130,8 +126,7 @@ def calories_chart():
 @activities_bp.route('/activities/calories-per-day')
 @login_required
 def calories_per_day_chart():   
-    from collections import defaultdict
-    activities = Activity.query.filter_by(user_id=session['user_id']).all()
+    activities = get_user_activities(session['user_id'])
     
     grouped = defaultdict(float)
     for a in activities:
@@ -148,8 +143,7 @@ def calories_per_day_chart():
 @activities_bp.route('/activities/distance-per-day')
 @login_required
 def distance_per_day_chart():
-    from collections import defaultdict
-    activities = Activity.query.filter_by(user_id=session['user_id']).all()
+    activities = get_user_activities(session['user_id'])
     
     # Gruppiert nach Datum
     grouped = defaultdict(float)
@@ -194,8 +188,7 @@ def delete_activity(id):
 @activities_bp.route('/avtivities/elevation-per-day')
 @login_required
 def elevation_per_day_chart():   
-    from collections import defaultdict
-    activities = Activity.query.filter_by(user_id=session['user_id']).all()
+    activities = get_user_activities(session['user_id'])
     
     grouped = defaultdict(float)
     for a in activities:
@@ -212,8 +205,7 @@ def elevation_per_day_chart():
 @activities_bp.route('/activities/heartrate-per-day')
 @login_required
 def heartrate_per_day_chart():   
-    from collections import defaultdict
-    activities = Activity.query.filter_by(user_id=session['user_id']).all()
+    activities = get_user_activities(session['user_id'])
     
     grouped = defaultdict(list)
     for a in activities:
@@ -238,15 +230,11 @@ def heartrate_per_day_chart():
 @activities_bp.route('/activities/combined-chart')
 @login_required
 def combined_chart():   
-    # Imports, die nur innerhalb der Funktion benötigt werden
-    from collections import defaultdict
-    from datetime import datetime
-
     # Aktuelle Nutzer-ID aus der Session holen
     user_id = session['user_id']
     
     # --- 1. Aktivitäten des Nutzers abfragen ---
-    activities = Activity.query.filter_by(user_id=user_id).all()
+    activities = get_user_activities(session['user_id'])
 
     # defaultdict für die tägliche Aggregation (Standardwerte pro Tag):
     # Jede Tages-Zeile besteht aus: Dauer, Distanz, Höhenmeter, Kalorien, Herzfrequenz-Liste
@@ -321,14 +309,11 @@ def combined_chart():
 
 @activities_bp.route('/activities/bike-chart')
 @login_required
-def bike_chart():    
-    from collections import defaultdict
-    from datetime import datetime
-    
+def bike_chart():        
     user_id = session['user_id']
     
     # Nur Radfahren-Aktivitäten filtern
-    cycling_activities = Activity.query.filter_by(user_id=user_id, activity_type="Radfahren").all()
+    cycling_activities = get_user_activities_by_type(user_id, "Radfahren")
     
     # Gruppierung nach Tag
     data = defaultdict(lambda: {'duration': 0, 'distance': 0, 'elevation': 0, 'hr': []})
@@ -362,13 +347,10 @@ def bike_chart():
 @activities_bp.route('/activities/run-chart')
 @login_required
 def run_chart():
-    from collections import defaultdict
-    from datetime import datetime
-
     user_id = session['user_id']
     
     # Nur Lauf-Aktivitäten filtern
-    activities = Activity.query.filter_by(user_id=user_id, activity_type='Laufen').all()
+    activities = get_user_activities_by_type(user_id, "Laufen")
 
     grouped = defaultdict(lambda: {'duration': 0, 'distance': 0, 'elevation': 0, 'hr': []})
 
