@@ -4,7 +4,7 @@ from fitnessapp.models.models import Activity, WeightEntry
 from collections import defaultdict
 from datetime import datetime
 from fitnessapp.utils.decorators import login_required
-from fitnessapp.utils.db_helpers import get_user_activities, get_user_activities_by_type
+from fitnessapp.utils.db_helpers import get_user_activities, get_user_activities_by_type, get_user_activities_for_chart, get_user_activities_by_type_for_chart
 
 activities_bp = Blueprint('activities', __name__)
 
@@ -77,7 +77,7 @@ def activity_list():
 @login_required
 def activity_chart():   
     # Aktivitäten holen
-    activities = get_user_activities(session['user_id'])
+    activities = get_user_activities_for_chart(session['user_id'])
     
     # Gruppierung nach Datum (ohne Urzeit)   
     grouped = defaultdict(float)
@@ -94,7 +94,7 @@ def activity_chart():
 @activities_bp.route('/activities/types')
 @login_required
 def activity_types_chart():
-    activities = get_user_activities(session['user_id'])
+    activities = get_user_activities_for_chart(session['user_id'])
     
     grouped = defaultdict(float)
     
@@ -109,7 +109,7 @@ def activity_types_chart():
 @activities_bp.route('/activities/calories')
 @login_required
 def calories_chart():   
-    activities = get_user_activities(session['user_id'])
+    activities = get_user_activities_for_chart(session['user_id'])
     
     grouped = defaultdict(float)
     
@@ -126,7 +126,7 @@ def calories_chart():
 @activities_bp.route('/activities/calories-per-day')
 @login_required
 def calories_per_day_chart():   
-    activities = get_user_activities(session['user_id'])
+    activities = get_user_activities_for_chart(session['user_id'])
     
     grouped = defaultdict(float)
     for a in activities:
@@ -143,7 +143,7 @@ def calories_per_day_chart():
 @activities_bp.route('/activities/distance-per-day')
 @login_required
 def distance_per_day_chart():
-    activities = get_user_activities(session['user_id'])
+    activities = get_user_activities_for_chart(session['user_id'])
     
     # Gruppiert nach Datum
     grouped = defaultdict(float)
@@ -188,7 +188,7 @@ def delete_activity(id):
 @activities_bp.route('/avtivities/elevation-per-day')
 @login_required
 def elevation_per_day_chart():   
-    activities = get_user_activities(session['user_id'])
+    activities = get_user_activities_for_chart(session['user_id'])
     
     grouped = defaultdict(float)
     for a in activities:
@@ -205,7 +205,7 @@ def elevation_per_day_chart():
 @activities_bp.route('/activities/heartrate-per-day')
 @login_required
 def heartrate_per_day_chart():   
-    activities = get_user_activities(session['user_id'])
+    activities = get_user_activities_for_chart(session['user_id'])
     
     grouped = defaultdict(list)
     for a in activities:
@@ -313,12 +313,12 @@ def bike_chart():
     user_id = session['user_id']
     
     # Nur Radfahren-Aktivitäten filtern
-    cycling_activities = get_user_activities_by_type(user_id, "Radfahren")
+    activities = get_user_activities_by_type_for_chart(user_id, "Radfahren")
     
     # Gruppierung nach Tag
     data = defaultdict(lambda: {'duration': 0, 'distance': 0, 'elevation': 0, 'hr': []})
     
-    for a in cycling_activities:
+    for a in activities:
         key = a.date.strftime('%d.%m.%Y')
         data[key]['duration'] += a.duration_min or 0
         data[key]['distance'] += a.distance_km or 0
@@ -350,7 +350,7 @@ def run_chart():
     user_id = session['user_id']
     
     # Nur Lauf-Aktivitäten filtern
-    activities = get_user_activities_by_type(user_id, "Laufen")
+    activities = get_user_activities_by_type_for_chart(user_id, "Laufen")
 
     grouped = defaultdict(lambda: {'duration': 0, 'distance': 0, 'elevation': 0, 'hr': []})
 
