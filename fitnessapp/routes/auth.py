@@ -15,22 +15,38 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        password = request.form['password']
-        height = float(request.form['height'])
-        age = int(request.form['age'])
-        weight = float(request.form['weight'])
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        height = request.form.get('height')
+        age = request.form.get('age')
+        weight = request.form.get('weight')
+        
+        # Leere Felder prüfen
+        if not name or not email or not password or not height or not age or not weight:
+            flash("Bitte fülle alle Pflichtfelder aus!", 'danger')
+            return redirect(request.url)
+        
+        # Werte umwandeln und validieren
+        try:
+            height = float(height)
+            age = int(age)
+            weight = float(weight)
+        except ValueError:
+            flash("Ungültige Eingaben!?", 'danger')
+            return redirect(request.url)
 
+        # Passwort hashen und bei User anlegen
         hashed_password = generate_password_hash(password)
         new_user = User(name=name, email=email, password=hashed_password, height_cm=height, age=age)
         db.session.add(new_user)
         db.session.commit()
 
+        # Gewichtseintrag
         first_weight = WeightEntry(user_id=new_user.id, weight_kg=weight)
         db.session.add(first_weight)
         db.session.commit()
-
+        
         flash('Registrierung erfolgreich! Bitte einloggen.')
         return redirect(url_for('auth.login'))
 
