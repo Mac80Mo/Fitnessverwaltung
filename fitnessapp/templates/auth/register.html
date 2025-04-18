@@ -1,21 +1,19 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>Registrierung</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}Registrieren{% endblock %}
+
+{% block content %}
+<div class="form-box">
     <h1>Registrieren</h1>
-    <form method="POST">
+    <form method="POST" autocomplete="off">
         <label>Name:</label><br>
-        <input type="text" name="name" required><br><br>
+        <input type="text" name="name" autocomplete="new-name" required><br><br>
 
         <label>E-Mail:</label><br>
-        <input type="email" name="email" required><br><br>
+        <input type="email" name="email" autocomplete="new-email" required><br><br>
 
         <label>Passwort:</label><br>
-        <input type="password" name="password" required><br><br>
+        <input type="password" name="password" autocomplete="new_password" required><br><br>
 
         <label>Körpergröße (cm):</label><br>
         <input type="number" name="height" required><br><br>
@@ -28,5 +26,5 @@
 
         <button type="submit">Registrieren</button>
     </form>
-</body>
-</html>
+</div>
+{% endblock %}
