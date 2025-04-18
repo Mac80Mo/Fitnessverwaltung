@@ -1,7 +1,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from fitnessapp import db
 from fitnessapp.utils.decorators import login_required
+from fitnessapp.utils.session_helpers import get_logged_in_user
+from fitnessapp.utils.stats import calculate_bmi
+from fitnessapp.utils.helpers import format_date_local
 from fitnessapp.models.models import WeightEntry, User
+
 
 tracking_bp = Blueprint('tracking', __name__)
 
@@ -21,16 +25,14 @@ def add_weight():
 @login_required
 def weight_list():   
     user_id = session['user_id']
-    user = User.query.get(user_id)
+    user = get_logged_in_user()
     
     entries = WeightEntry.query.filter_by(user_id=user_id).order_by(WeightEntry.date.desc()).all()
     
     # BMI berechnen, wenn Gewicht vorhanden ist
     if entries:
         aktuelles_gewicht = entries[0].weight_kg
-        größe_m = user.height_cm / 100
-        bmi = aktuelles_gewicht / (größe_m ** 2)
-        bmi = round(bmi, 2)
+        bmi = calculate_bmi(aktuelles_gewicht, user.height_cm)
     else:
         bmi = None
     
@@ -45,12 +47,11 @@ def weight_chart():
     entries = WeightEntry.query.filter_by(user_id=user_id).order_by(WeightEntry.date.asc()).all()
     
     # Daten für das Diagramm vorbereiten
-    labels = [entry.date.strftime('%d.%m.%Y') for entry in entries]
+    labels = [format_date_local(entry.date) for entry in entries]
     weights = [entry.weight_kg for entry in entries]
     
     #BMI für jeden Eintrag berechnen
-    height_m = user.height_cm / 100
-    bmis = [round(weight / (height_m ** 2), 2) for weight in weights]
+    bmis = [calculate_bmi(w, user.height_cm) for w in weights]
     
     return render_template('tracking/weight_chart.html', labels=labels, weights=weights, bmis=bmis)
 
