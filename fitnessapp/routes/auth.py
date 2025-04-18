@@ -62,7 +62,7 @@ def dashboard():
     height_m = user.height_cm / 100
     bmi = round(last_weight / (height_m ** 2), 2) if last_weight else None
 
-    # Aktivitäten heute (Datum vergleichen)
+    # Aktivitäten heute (Datum vergleichen) !! Daraus könnten wir eine Klasse machen... !!
     today = datetime.today().date()
     todays_activities = [a for a in user.activities if a.date.date() == today]
     duration_today = sum(a.duration_min or 0 for a in todays_activities)

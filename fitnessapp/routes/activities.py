@@ -3,15 +3,13 @@ from fitnessapp import db
 from fitnessapp.models.models import Activity, WeightEntry
 from collections import defaultdict
 from datetime import datetime
+from fitnessapp.utils.decorators import login_required
 
 activities_bp = Blueprint('activities', __name__)
 
 @activities_bp.route('/activities/add', methods=['GET', 'POST'])
-def add_activity():
-    if 'user_id' not in session:
-        flash('Bitte zuerst einloggen.', 'warning')
-        return redirect(url_for('auth.login'))
-    
+@login_required
+def add_activity():    
     if request.method == 'POST':
         activity_type = request.form['activity_type']
         duration = float(request.form['duration'])
@@ -41,10 +39,8 @@ def add_activity():
 
 
 @activities_bp.route('/activities')
-def activity_list():
-    if 'user_id' not in session:
-        return redirect(url_for('auth.login'))
-    
+@login_required
+def activity_list():   
     activities = Activity.query.filter_by(user_id=session['user_id']).order_by(Activity.date.desc()).all()
     
     # Statistik berechnen
@@ -77,10 +73,8 @@ def activity_list():
 
 
 @activities_bp.route('/activities/chart')
-def activity_chart():
-    if 'user_id' not in session:
-        return redirect(url_for('auth.login'))
-    
+@login_required
+def activity_chart():   
     # Aktivitäten holen
     activities = Activity.query.filter_by(user_id=session['user_id']).order_by(Activity.date.asc()).all()
     
@@ -100,10 +94,8 @@ def activity_chart():
 
 
 @activities_bp.route('/activities/types')
+@login_required
 def activity_types_chart():
-    if 'user_id' not in session:
-        return redirect(url_for('auth.login'))
-    
     activities = Activity.query.filter_by(user_id=session['user_id']).all()
     
     from collections import defaultdict
@@ -118,10 +110,8 @@ def activity_types_chart():
     return render_template('activities/activity_types_chart.html', labels=labels, durations=durations)
 
 @activities_bp.route('/activities/calories')
-def calories_chart():
-    if 'user_id' not in session:
-        return redirect(url_for('auth.login'))
-    
+@login_required
+def calories_chart():   
     activities = Activity.query.filter_by(user_id=session['user_id']).all()
     
     from collections import defaultdict
@@ -138,10 +128,8 @@ def calories_chart():
 
 
 @activities_bp.route('/activities/calories-per-day')
-def calories_per_day_chart():
-    if 'user_id' not in session:
-        return redirect(url_for('auth.login'))
-    
+@login_required
+def calories_per_day_chart():   
     from collections import defaultdict
     activities = Activity.query.filter_by(user_id=session['user_id']).all()
     
@@ -158,10 +146,8 @@ def calories_per_day_chart():
 
 
 @activities_bp.route('/activities/distance-per-day')
+@login_required
 def distance_per_day_chart():
-    if 'user_id' not in session:
-        return redirect(url_for('auth.login'))
-    
     from collections import defaultdict
     activities = Activity.query.filter_by(user_id=session['user_id']).all()
     
@@ -178,11 +164,8 @@ def distance_per_day_chart():
     return render_template('activities/distance_per_day.html', labels=labels, distances=distances)
 
 @activities_bp.route('/edit/<int:id>', methods=['GET', 'POST'])
-def edit_activity(id):
-    if 'user_id' not in session:
-        flash('Bitte einloggen.', 'warning')
-        return redirect(url_for('auth.login'))
-    
+@login_required
+def edit_activity(id):   
     activity = Activity.query.get_or_404(id)
     
     if request.method == 'POST':
@@ -200,11 +183,8 @@ def edit_activity(id):
 
 
 @activities_bp.route('/delete/<int:id>', methods=['POST'])
-def delete_activity(id):
-    if 'user_id' not in session:
-        flash('Bitte einloggen.', 'warning')
-        return redirect(url_for('auth.login'))
-    
+@login_required
+def delete_activity(id):   
     activity = Activity.query.get_or_404(id)
     db.session.delete(activity)
     db.session.commit()
@@ -212,11 +192,8 @@ def delete_activity(id):
     return redirect(url_for('activities.activity_list'))
 
 @activities_bp.route('/avtivities/elevation-per-day')
-def elevation_per_day_chart():
-    if 'user_id' not in session:
-        flash('Bitte zuerst einloggen.', 'warning')
-        return redirect(url_for('auth.login'))
-    
+@login_required
+def elevation_per_day_chart():   
     from collections import defaultdict
     activities = Activity.query.filter_by(user_id=session['user_id']).all()
     
@@ -233,11 +210,8 @@ def elevation_per_day_chart():
 
 
 @activities_bp.route('/activities/heartrate-per-day')
-def heartrate_per_day_chart():
-    if 'user_id' not in session:
-        flash('Bitte zuerst einloggen.', 'warning')
-        return redirect(url_for('auth.login'))
-    
+@login_required
+def heartrate_per_day_chart():   
     from collections import defaultdict
     activities = Activity.query.filter_by(user_id=session['user_id']).all()
     
@@ -262,12 +236,8 @@ def heartrate_per_day_chart():
 
 # Route für den kombinierten Aktivitäts-Chart
 @activities_bp.route('/activities/combined-chart')
-def combined_chart():
-    # Prüfen, ob der Nutzer eingeloggt ist
-    if 'user_id' not in session:
-        flash('Bitte einloggen.', 'warning')  # Hinweis für den Nutzer
-        return redirect(url_for('auth.login'))  # Weiterleitung zur Login-Seite
-    
+@login_required
+def combined_chart():   
     # Imports, die nur innerhalb der Funktion benötigt werden
     from collections import defaultdict
     from datetime import datetime
@@ -350,11 +320,8 @@ def combined_chart():
 #####################################################################
 
 @activities_bp.route('/activities/bike-chart')
-def bike_chart():
-    if 'user_id' not in session:
-        flash('Bitte einloggen.', 'warning')
-        return redirect(url_for('auth.login'))
-    
+@login_required
+def bike_chart():    
     from collections import defaultdict
     from datetime import datetime
     
@@ -393,11 +360,8 @@ def bike_chart():
 ################################################################
 
 @activities_bp.route('/activities/run-chart')
+@login_required
 def run_chart():
-    if 'user_id' not in session:
-        flash('Bitte einloggen.', 'warning')
-        return redirect(url_for('auth.login'))
-
     from collections import defaultdict
     from datetime import datetime
 
@@ -416,7 +380,7 @@ def run_chart():
         if a.avg_heart_rate:
             grouped[date_key]['hr'].append(a.avg_heart_rate)
 
-    # 🔧 Hier: Sortiere nach echtem Datum, nicht nach alphabetisch
+    # Hier: Sortiere nach echtem Datum, nicht nach alphabetisch
     labels = sorted(grouped.keys(), key=lambda d: datetime.strptime(d, '%d.%m.%Y'))
 
     # Entsprechend sortierte Werte extrahieren
