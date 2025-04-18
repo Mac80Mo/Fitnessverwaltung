@@ -3,6 +3,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from fitnessapp import db
 from fitnessapp.utils.decorators import login_required
 from fitnessapp.models.models import User, WeightEntry, Activity
+from fitnessapp.utils.stats import sum_attr, calc_change
+from fitnessapp.utils.dates import get_month_ranges
+from fitnessapp.utils.session_helpers import get_logged_in_user
 from datetime import date
 
 auth_bp = Blueprint('auth', __name__)
@@ -43,7 +46,7 @@ def login():
         email = request.form['email']
         password = request.form['password']
         
-        user = User.query.filter_by(email=email).first()
+        user = get_logged_in_user()
         
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
@@ -58,7 +61,7 @@ def login():
 @login_required
 def dashboard():
     from datetime import datetime
-    user = User.query.get(session['user_id'])
+    user = get_logged_in_user()
 
     # Letztes Gewicht und BMI berechnen
     weights = sorted(user.weights, key=lambda e: e.date)
@@ -86,9 +89,8 @@ def dashboard():
     one_week_ago = today - timedelta(days=7)
     two_weeks_ago = today - timedelta(days=14)
     
+    last_month, end_last_month = get_month_ranges(today)
     first_day_this_month = today.replace(day=1)
-    last_month = (first_day_this_month - timedelta(days=1)).replace(day=1)
-    end_last_month = first_day_this_month - timedelta(days=1)
     
     ## Aktivitäten nach Zeiträumen filtern
     activities_this_week = [a for a in all_activities if one_week_ago <= a.date.date() <= today]
@@ -97,10 +99,7 @@ def dashboard():
     activities_this_month = [a for a in all_activities if first_day_this_month <= a.date.date() <= today]
     activities_prev_month = [a for a in all_activities if last_month <= a.date.date() <= end_last_month]
     
-    ## Summen berechnen
-    def sum_attr(data, attr):
-        return sum(getattr(a, attr) or 0 for a in data)
-    
+    ## Summen berechnen   
     dur_this_week = sum_attr(activities_this_week, 'duration_min')
     dur_prev_week = sum_attr(activities_prev_week, 'duration_min')
     
@@ -127,12 +126,7 @@ def dashboard():
     
     
     
-    ## Prozentuale Änderung berechnen
-    def calc_change(new, old):
-        if old == 0:
-            return 100 if new > 0 else None
-        return round((new - old) / old * 100, 1)
-    
+    ## Prozentuale Änderung berechnen   
     change_dur_week = calc_change(dur_this_week, dur_prev_week)
     change_cal_week = calc_change(cal_this_week, cal_prev_week)
     change_km_week = calc_change(km_this_week, km_prev_week)
@@ -226,7 +220,7 @@ def logout():
 @auth_bp.route('/profile')
 @login_required
 def profile():   
-    user = User.query.get(session['user_id'])
+    user = get_logged_in_user()
     weights = sorted(user.weights, key=lambda e: e.date)
     
     if weights:
@@ -272,7 +266,7 @@ def profile():
 @auth_bp.route('/profile/edit', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    user = User.query.get(session['user_id'])
+    user = get_logged_in_user()
     
     if request.method == 'POST':
         user.name = request.form['name']
