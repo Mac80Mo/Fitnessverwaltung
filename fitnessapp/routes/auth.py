@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from fitnessapp import db
+from fitnessapp.utils.decorators import login_required
 from fitnessapp.models.models import User, WeightEntry, Activity
 from datetime import date
 
@@ -48,11 +49,8 @@ def login():
     return render_template('auth/login.html')
 
 @auth_bp.route('/dashboard')
+@login_required
 def dashboard():
-    if 'user_id' not in session:
-        flash('Bitte zuerst einloggen.', 'warning')
-        return redirect(url_for('auth.login'))
-    
     from datetime import datetime
     user = User.query.get(session['user_id'])
 
@@ -220,11 +218,8 @@ def logout():
 
 # Profilseite
 @auth_bp.route('/profile')
-def profile():
-    if 'user_id' not in session:
-        flash('Bitte zuerst einloggen.', 'warning')
-        return redirect(url_for('auth.login'))
-    
+@login_required
+def profile():   
     user = User.query.get(session['user_id'])
     weights = sorted(user.weights, key=lambda e: e.date)
     
@@ -269,11 +264,8 @@ def profile():
     )
     
 @auth_bp.route('/profile/edit', methods=['GET', 'POST'])
+@login_required
 def edit_profile():
-    if 'user_id' not in session:
-        flash('Bitte zuerst einloggen.', 'warning')
-        return redirect(url_for('auth.login'))
-    
     user = User.query.get(session['user_id'])
     
     if request.method == 'POST':

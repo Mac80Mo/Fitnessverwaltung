@@ -1,15 +1,13 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from fitnessapp import db
+from fitnessapp.utils.decorators import login_required
 from fitnessapp.models.models import WeightEntry, User
 
 tracking_bp = Blueprint('tracking', __name__)
 
 @tracking_bp.route('/weight/add', methods=['GET', 'POST'])
-def add_weight():
-    if 'user_id' not in session:
-        flash('Bitte zuerst einloggen.', 'warning')
-        return redirect(url_for('auth.login'))
-    
+@login_required
+def add_weight():   
     if request.method == 'POST':
         weight = float(request.form['weight'])
         new_entry = WeightEntry(user_id=session['user_id'], weight_kg=weight)
@@ -20,10 +18,8 @@ def add_weight():
     return render_template('tracking/add_weight.html')
 
 @tracking_bp.route('/weight/list')
-def weight_list():
-    if 'user_id' not in session:
-        return redirect(url_for('auth.login'))
-    
+@login_required
+def weight_list():   
     user_id = session['user_id']
     user = User.query.get(user_id)
     
@@ -41,10 +37,8 @@ def weight_list():
     return render_template('tracking/weight_list.html', entries=entries, bmi=bmi)
 
 @tracking_bp.route('/weight/chart')
+@login_required
 def weight_chart():
-    if 'user_id' not in session:
-        return redirect(url_for('auth.login'))
-    
     user_id = session['user_id']
     user = User.query.get(user_id)
     
@@ -61,11 +55,8 @@ def weight_chart():
     return render_template('tracking/weight_chart.html', labels=labels, weights=weights, bmis=bmis)
 
 @tracking_bp.route('/weight/edit/<int:id>', methods=['GET', 'POST'])
-def edit_weight(id):
-    if 'user_id' not in session:
-        flash('Bitte zuerst einloggen.', 'warning')
-        return redirect(url_for('auth.login'))
-    
+@login_required
+def edit_weight(id):   
     entry = WeightEntry.query.get_or_404(id)
     
     # Sicherstellen, dass der Eintrag dem eingeloggten User gehört
@@ -93,11 +84,8 @@ def edit_weight(id):
 
 
 @tracking_bp.route('/weight/delete/<int:id>', methods=['POST'])
+@login_required
 def delete_weight(id):
-    if 'user_id' not in session:
-        flash('Bitte zuerst einloggen.', 'warning')
-        return redirect(url_for('auth.login'))
-
     entry = WeightEntry.query.get_or_404(id)
     
     # Schutz: Fremde Einträge dürfen nicht gelöscht werden
