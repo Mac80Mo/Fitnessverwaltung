@@ -16,6 +16,7 @@ def register():
         password = request.form['password']
         height = float(request.form['height'])
         age = int(request.form['age'])
+        weight = float(request.form['weight'])
         
         # Passwort sicher hashen
         hashed_password = generate_password_hash(password)
@@ -23,6 +24,11 @@ def register():
         # Neuen Nutzer erstellen und speichern
         new_user = User(name = name, email = email, password = hashed_password, height_cm = height, age = age)
         db.session.add(new_user)
+        db.session.commit()
+        
+        # Erstes Gewicht speichern
+        first_weight = WeightEntry(user_id=new_user.id, weight_kg=weight)
+        db.session.add(first_weight)
         db.session.commit()
         
         flash('Registrierung erfolgreich! Bitte einloggen.')
