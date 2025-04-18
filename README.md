@@ -143,7 +143,7 @@ python run.py
 📍 Im Browser öffnen:
 
 ```
-http://localhost:5000
+http://localhost:5000/login
 ```
 
 ---
