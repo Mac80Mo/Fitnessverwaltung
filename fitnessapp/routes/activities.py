@@ -25,6 +25,10 @@ def add_activity():
         # Kommentar
         comment = request.form.get('comment')
         
+        if elevation is not None and elevation < 0:
+            flash("höhenmeter dürfen nicht negativ sein.", "danger")
+            return redirect(request.url)
+        
         activity = Activity(
             user_id=session['user_id'],
             activity_type=activity_type,
@@ -200,7 +204,7 @@ def elevation_per_day_chart():
 
     grouped = defaultdict(float)
     for a in activities:
-        if a.elevation_gain:
+        if a.elevation_gain is not None and a.elevation_gain >= 0:
             key = a.date.date()
             grouped[key] += a.elevation_gain
 
