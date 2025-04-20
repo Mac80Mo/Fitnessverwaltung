@@ -29,6 +29,7 @@
         <th>Höhenmeter</th>
         <th>Durchschn. Puls</th>
         <th>Kalorien</th>
+        <th>Kommentar</th>
         <th>Aktionen</th>
     </tr>
     {% for a in activities %}
@@ -40,6 +41,7 @@
         <td>{{ a.elevation_gain or "-" }}</td>
         <td>{{ a.avg_heart_rate or "-" }}</td>
         <td>{{ a.calories or "-" }}</td>
+        <td>{{ a.comment or "-" }}</td>
         <td>
             <a href="{{ url_for('activities.edit_activity', id=a.id) }}" class="btn btn-primary">Bearbeiten</a>
             <form method="POST" action="{{ url_for('activities.delete_activity', id=a.id) }}" style="display:inline;">

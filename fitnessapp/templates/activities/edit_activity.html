@@ -25,6 +25,9 @@
         <label>Durchschn. Herzfrequenz (optional):</label>
         <input type="number" name="avg_heart_rate" value="{{ activity.avg_heart_rate or '' }}">
 
+        <label>Kommentar (optional):</label>
+        <textarea name="comment" rows="3">{{ activity.comment or "-" }}</textarea>
+
         <button type="submit" class="btn btn-danger">Änderungen speichern</button>
     </form>
 

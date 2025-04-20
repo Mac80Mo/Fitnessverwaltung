@@ -22,6 +22,9 @@ def add_activity():
         elevation = request.form.get('elevation_gain', type=float)      # Höhenmeter
         heart_rate = request.form.get('avg_heart_rate', type=int)
         
+        # Kommentar
+        comment = request.form.get('comment')
+        
         activity = Activity(
             user_id=session['user_id'],
             activity_type=activity_type,
@@ -29,7 +32,8 @@ def add_activity():
             distance_km=distance,
             calories=calories,
             elevation_gain=elevation,
-            avg_heart_rate=heart_rate
+            avg_heart_rate=heart_rate,
+            comment=comment
         )
         
         db.session.add(activity)
@@ -172,6 +176,7 @@ def edit_activity(id):
         activity.distance_km = float(request.form['kilometers']) if request.form['kilometers'] else None
         activity.elevation_gain = request.form.get('elevation_gain', type=float)    # Höhenmeter
         activity.avg_heart_rate = request.form.get('avg_heart_rate', type=int)
+        activity.comment = request.form.get('comment')
         db.session.commit()
         flash('Aktivität aktualisiert.', 'success')
         return redirect(url_for('activities.activity_list'))

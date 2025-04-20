@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 from fitnessapp import db
+from sqlalchemy import Text
 
 # Benutzer-Modell: enthält Basisdaten (Stammdaten der User)
 class User(db.Model):
@@ -39,3 +40,4 @@ class Activity(db.Model):
     date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))       # Datum d. Aktivität
     elevation_gain = db.Column(db.Float)                                            # Höhenmeter
     avg_heart_rate = db.Column(db.Integer)                                          # ds. Herzfrequenz
+    comment = db.Column(Text)                                                    # Kommentarfunktion
