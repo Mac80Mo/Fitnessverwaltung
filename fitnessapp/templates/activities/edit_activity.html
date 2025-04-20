@@ -14,7 +14,7 @@
         <input type="number" name="duration_min" step="1" value="{{ activity.duration_min }}" required>
 
         <label>Distanz (km):</label>
-        <input type="number" name="kilometers" step="0.1" value="{{ activity.kilometers or '' }}">
+        <input type="number" name="kilometers" step="0.1" value="{{ activity.distance_km or '' }}">
 
         <label>Höhenmeter (optional):</label>
         <input type="number" name="elevation_gain" step="0.1" value="{{ activity.elevation_gain or '' }}">
